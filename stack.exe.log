@@ -194,3 +194,117 @@ Run file:	C:\Users\boris\projects\Stack\stack.exe
 Directory:	C:\Users\boris\projects\Stack
 
 --------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Users\boris\projects\Stack\stack.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF6C528027B в функции stack_err() в файле C:/Users/boris/projects/Stack/stack.cpp на строке 154. Попытка прочесть данные по адресу NULL в модуле C:\Users\boris\projects\Stack\stack.exe. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400], Instance: 0x00007FF6C53427D0 (64-bit), Flags: Cmdre0, Thread: 0x1E18 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6C528027B in C:\Users\boris\projects\Stack\stack.exe: stack_err() at C:/Users/boris/projects/Stack/stack.cpp:154:
+
+    152:         return null_pointer_to_structure;
+    153: 
+=>  154:     if ((stk->data)[0] != canary_l)
+    155:         return left_canary_is_died;
+    156:     if ((stk->data)[stk->capacity + 1] != canary_r)
+
+# 1 0x00007FF6C527FF9A in C:\Users\boris\projects\Stack\stack.exe: stack_creator() at C:/Users/boris/projects/Stack/stack.cpp:76:
+
+     74: stack_errors stack_creator(stack* stk, ssize_t capacity)
+     75: {
+=>   76:     if (stack_err(stk))
+     77:         {
+     78:         printf("Error in stack_creator\n");
+
+# 2 0x00007FF6C527FE92 in C:\Users\boris\projects\Stack\stack.exe: main() at C:/Users/boris/projects/Stack/stack.cpp:46:
+
+     44: {
+     45:     stack stk1 = {0,0,0,0};
+=>   46:     stack_creator(&stk1, 5);
+     47:     print_data(stk1.data, stk1.capacity);
+     48: 
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	C:\Users\boris\Downloads\TX\TXLib.h
+Compiled:	Oct  2 2025 19:23:25, GNU g++ 15.2.0, std=201703L, MinGW-W64 Runtime 13.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 02 2025 19:23:48
+
+Run file:	C:\Users\boris\projects\Stack\stack.exe
+Directory:	C:\Users\boris\projects\Stack
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Users\boris\projects\Stack\stack.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF6C528027B в функции stack_err() в файле C:/Users/boris/projects/Stack/stack.cpp на строке 154. Попытка прочесть данные по адресу NULL в модуле C:\Users\boris\projects\Stack\stack.exe. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400], Instance: 0x00007FF6C53427D0 (64-bit), Flags: Cmdre0, Thread: 0x1E18 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6C528027B in C:\Users\boris\projects\Stack\stack.exe: stack_err() at C:/Users/boris/projects/Stack/stack.cpp:154:
+
+    152:         return null_pointer_to_structure;
+    153: 
+=>  154:     if ((stk->data)[0] != canary_l)
+    155:         return left_canary_is_died;
+    156:     if ((stk->data)[stk->capacity + 1] != canary_r)
+
+# 1 0x00007FF6C527FF9A in C:\Users\boris\projects\Stack\stack.exe: stack_creator() at C:/Users/boris/projects/Stack/stack.cpp:76:
+
+     74: stack_errors stack_creator(stack* stk, ssize_t capacity)
+     75: {
+=>   76:     if (stack_err(stk))
+     77:         {
+     78:         printf("Error in stack_creator\n");
+
+# 2 0x00007FF6C527FE92 in C:\Users\boris\projects\Stack\stack.exe: main() at C:/Users/boris/projects/Stack/stack.cpp:46:
+
+     44: {
+     45:     stack stk1 = {0,0,0,0};
+=>   46:     stack_creator(&stk1, 5);
+     47:     print_data(stk1.data, stk1.capacity);
+     48: 
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	C:\Users\boris\Downloads\TX\TXLib.h
+Compiled:	Oct  2 2025 19:23:25, GNU g++ 15.2.0, std=201703L, MinGW-W64 Runtime 13.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 02 2025 19:23:48
+
+Run file:	C:\Users\boris\projects\Stack\stack.exe
+Directory:	C:\Users\boris\projects\Stack
+
+--------------------------------------------------
