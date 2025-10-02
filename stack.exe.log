@@ -1,0 +1,196 @@
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Users\boris\projects\Stack\stack.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF6819C0177 в функции stack_push() в файле C:/Users/boris/projects/Stack/stack.cpp на строке 100. Попытка записать данные по адресу NULL в модуле C:\Users\boris\projects\Stack\stack.exe. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400], Instance: 0x00007FF681A827D0 (64-bit), Flags: Cmdre0, Thread: 0x21C4 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6819C0177 in C:\Users\boris\projects\Stack\stack.exe: stack_push() at C:/Users/boris/projects/Stack/stack.cpp:100:
+
+     98:     }
+     99:     
+=>  100:     stk->data[stk->size++] = value;
+    101:     
+    102:     return no_errors;
+
+# 1 0x00007FF6819BFE97 in C:\Users\boris\projects\Stack\stack.exe: main() at C:/Users/boris/projects/Stack/stack.cpp:42:
+
+     40:     stack stk1 = {0,0,0,0};
+     41:     stack_value value = 10;
+=>   42:     stack_push(&stk1, value);
+     43:     
+     44:     value = 20;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	C:\Users\boris\Downloads\TX\TXLib.h
+Compiled:	Sep 30 2025 15:34:05, GNU g++ 15.2.0, std=201703L, MinGW-W64 Runtime 13.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Sep 30 2025 15:34:37
+
+Run file:	C:\Users\boris\projects\Stack\stack.exe
+Directory:	C:\Users\boris\projects\Stack
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Users\boris\projects\Stack\stack.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF6819C0177 в функции stack_push() в файле C:/Users/boris/projects/Stack/stack.cpp на строке 100. Попытка записать данные по адресу NULL в модуле C:\Users\boris\projects\Stack\stack.exe. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400], Instance: 0x00007FF681A827D0 (64-bit), Flags: Cmdre0, Thread: 0x21C4 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6819C0177 in C:\Users\boris\projects\Stack\stack.exe: stack_push() at C:/Users/boris/projects/Stack/stack.cpp:100:
+
+     98:     }
+     99:     
+=>  100:     stk->data[stk->size++] = value;
+    101:     
+    102:     return no_errors;
+
+# 1 0x00007FF6819BFE97 in C:\Users\boris\projects\Stack\stack.exe: main() at C:/Users/boris/projects/Stack/stack.cpp:42:
+
+     40:     stack stk1 = {0,0,0,0};
+     41:     stack_value value = 10;
+=>   42:     stack_push(&stk1, value);
+     43:     
+     44:     value = 20;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	C:\Users\boris\Downloads\TX\TXLib.h
+Compiled:	Sep 30 2025 15:34:05, GNU g++ 15.2.0, std=201703L, MinGW-W64 Runtime 13.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Sep 30 2025 15:34:37
+
+Run file:	C:\Users\boris\projects\Stack\stack.exe
+Directory:	C:\Users\boris\projects\Stack
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Users\boris\projects\Stack\stack.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF7396D0177 в функции stack_push() в файле C:/Users/boris/projects/Stack/stack.cpp на строке 100. Попытка записать данные по адресу NULL в модуле C:\Users\boris\projects\Stack\stack.exe. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400], Instance: 0x00007FF7397927D0 (64-bit), Flags: Cmdre0, Thread: 0x2544 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF7396D0177 in C:\Users\boris\projects\Stack\stack.exe: stack_push() at C:/Users/boris/projects/Stack/stack.cpp:100:
+
+     98:     }
+     99:     
+=>  100:     stk->data[stk->size++] = value;
+    101:     
+    102:     return no_errors;
+
+# 1 0x00007FF7396CFE97 in C:\Users\boris\projects\Stack\stack.exe: main() at C:/Users/boris/projects/Stack/stack.cpp:42:
+
+     40:     stack stk1 = {0,0,0,0};
+     41:     stack_value value = 10;
+=>   42:     stack_push(&stk1, value);
+     43:     
+     44:     value = 20;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	C:\Users\boris\Downloads\TX\TXLib.h
+Compiled:	Sep 30 2025 15:37:34, GNU g++ 15.2.0, std=201703L, MinGW-W64 Runtime 13.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Sep 30 2025 15:37:39
+
+Run file:	C:\Users\boris\projects\Stack\stack.exe
+Directory:	C:\Users\boris\projects\Stack
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Users\boris\projects\Stack\stack.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF7396D0177 в функции stack_push() в файле C:/Users/boris/projects/Stack/stack.cpp на строке 100. Попытка записать данные по адресу NULL в модуле C:\Users\boris\projects\Stack\stack.exe. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400], Instance: 0x00007FF7397927D0 (64-bit), Flags: Cmdre0, Thread: 0x2544 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF7396D0177 in C:\Users\boris\projects\Stack\stack.exe: stack_push() at C:/Users/boris/projects/Stack/stack.cpp:100:
+
+     98:     }
+     99:     
+=>  100:     stk->data[stk->size++] = value;
+    101:     
+    102:     return no_errors;
+
+# 1 0x00007FF7396CFE97 in C:\Users\boris\projects\Stack\stack.exe: main() at C:/Users/boris/projects/Stack/stack.cpp:42:
+
+     40:     stack stk1 = {0,0,0,0};
+     41:     stack_value value = 10;
+=>   42:     stack_push(&stk1, value);
+     43:     
+     44:     value = 20;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 174, Date: 2025-08-17 06:00:49 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	C:\Users\boris\Downloads\TX\TXLib.h
+Compiled:	Sep 30 2025 15:37:34, GNU g++ 15.2.0, std=201703L, MinGW-W64 Runtime 13.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Sep 30 2025 15:37:40
+
+Run file:	C:\Users\boris\projects\Stack\stack.exe
+Directory:	C:\Users\boris\projects\Stack
+
+--------------------------------------------------
