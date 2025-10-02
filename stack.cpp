@@ -3,6 +3,8 @@
 
 #define Max_size_t_value 1000000000
 #define MATAN 666
+//#define Is_everything_OK(stk) if(stk.error != 0){printf("something is wrong\n"); stack_dumb(&stk); return 0;}
+#define IS_work(func) if(func){return 0;}
 enum stack_errors 
 {
     no_errors = 0,
@@ -38,9 +40,10 @@ stack_errors stack_creator(stack* stk, ssize_t capacity);
 stack_errors stack_pop(stack* stk, stack_value* pop_value);
 stack_errors stack_err(stack* stk);
 void stack_dumb(stack* stack);
-stack_errors widen_memory(stack_value** data, ssize_t capacity);
+stack_errors widen_memory(stack* stk);
 void print_data(stack_value* data, ssize_t capacity);
 void stack_destructor(stack* stack);
+int error_decoder(stack* stk);
 
 
 
@@ -48,26 +51,34 @@ int main()
 {
     stack stk1 = {0,0,0,0};
     stack_creator(&stk1, 5);
+    //Is_everything_OK(stk1)
     //stack_dumb(&stk1);
     //print_data(stk1.data, stk1.capacity);
 
     stack_value value = 10;
     stack_push(&stk1, value);
+    IS_work(stack_push(&stk1, value));
+    
     //stack_dumb(&stk1);
     //print_data(stk1.data, stk1.capacity);
     
     value = 20;
-    stack_push(&stk1, value);
+    IS_work(stack_push(&stk1, value));
     //stack_dumb(&stk1);
     
     stack_value pop_value = 0;
-    stack_pop(&stk1, &pop_value);
+    IS_work(stack_pop(&stk1, &pop_value));
     //stack_dumb(&stk1);
     printf("pop_value1 = %d\n", pop_value);
 
 
-    stack_pop(&stk1, &pop_value);
+    IS_work(stack_pop(&stk1, &pop_value));
     printf("pop_value2 = %d\n", pop_value);
+    IS_work(stack_pop(&stk1, &pop_value));
+    printf("pop_value3 = %d\n", pop_value);
+    IS_work(stack_pop(&stk1, &pop_value));
+
+
     //stack_dumb(&stk1);
     //print_data(stk1.data, stk1.capacity);   
     
@@ -86,7 +97,10 @@ stack_errors stack_creator(stack* stk, ssize_t capacity)
     
     stk->capacity = capacity;
     if (stk->capacity != capacity)
+    {
+        stk->error |= capacity_was_not_assigned;
         return capacity_was_not_assigned;
+    }
     //printf("data nad capacity\n");
     stk->size = 0;
     stk->data[0] = canary_l;
@@ -94,7 +108,7 @@ stack_errors stack_creator(stack* stk, ssize_t capacity)
     if (stack_err(stk))
     {
         printf("Error after creating stack\n");
-        return(stack_err(stk));
+        return errors_in_stack;
     }
     return no_errors;
 }
@@ -108,9 +122,9 @@ stack_errors stack_push(stack* stk, stack_value value)
     if (stk->size == stk->capacity)
     {
         //stk->data = (stack_value*)realloc(stk->data, (stk->capacity*2 + 2)sizeof(stack_value));
-        widen_memory(&(stk->data), stk->capacity);
-        stk->capacity *= 2;
-        stk->data[stk->capacity + 1] = canary_r;
+        widen_memory(stk);
+        // stk->capacity *= 2;
+        // stk->data[stk->capacity + 1] = canary_r;
         
         if (!stk->data)
         {
@@ -138,8 +152,10 @@ stack_errors stack_pop(stack* stk, stack_value* pop_value)
 
     if (stk->size == 0)
     {
-        printf("Stack size = 0");
-        return size_in_pop_is_null;
+        printf("Stack size = 0\n");
+        stk->error |= size_in_pop_is_null;
+        stack_err(stk);
+        return errors_in_stack;
     }
 
 
@@ -160,6 +176,7 @@ stack_errors stack_err(stack* stk)
 {
     if (!stk)
     {
+        stack_dumb(stk);
         printf("Null pointer_to struct\n");
         return null_pointer_to_structure;
     }
@@ -167,31 +184,36 @@ stack_errors stack_err(stack* stk)
     {
         stk->error |= left_canary_is_died; 
         printf("left canary died\n");
-        return left_canary_is_died;
+        //return left_canary_is_died;
     }
     if ((stk->data)[stk->capacity + 1] != canary_r)
     {
         stk->error |= right_canary_is_died; 
         printf("right canary died\n");
-        return right_canary_is_died;
+        //return right_canary_is_died;
     }
     if (stk->capacity < 0)
     {
         stk->error |= no_valid_campacity;
         printf("no valid campacity\n");
-        return no_valid_campacity;
+        //return no_valid_campacity;
     }
     if (stk->size < 0)
     {
         stk->error |= no_valid_size;
         printf("no valid size\n");
-        return no_valid_size;
+        //return no_valid_size;
     }   
     if (stk->size > stk->capacity)
     {
         stk->error |= size_more_capacity;
         printf("stack_size more stack_capacity\n");
-        return size_more_capacity;    
+        //return size_more_capacity;    
+    }
+    if(stk->error != 0)
+    {
+        stack_dumb(stk);
+        return errors_in_stack;
     }
     return no_errors;
 }
@@ -199,12 +221,15 @@ stack_errors stack_err(stack* stk)
 void stack_dumb(stack* stack)
 {
     void* stack_pointer = stack;
-    ssize_t size = stack->size;
-    ssize_t capacity = stack->capacity;
-    stack_value* data = stack->data;
-
-    if (&stack)
+    
+    
+    if (!error_decoder(stack))
     {
+        ssize_t size = stack->size;
+        ssize_t capacity = stack->capacity;
+        stack_value* data = stack->data;
+
+
         printf("stack addres = %p\n", stack_pointer);
         printf("stack size = %lld\n", size);
         printf("stack capacity = %lld\n", capacity);
@@ -225,13 +250,20 @@ void stack_dumb(stack* stack)
         printf("Nullptr to struct really? u r an idiot NOW???\n");
     }
 }
-stack_errors widen_memory(stack_value** data, ssize_t capacity)
+stack_errors widen_memory(stack* stk)
 {
-    *data = (stack_value*)realloc(*data, (capacity*2 + 2)*sizeof(stack_value));
-    if (!data)
+    stk->data = (stack_value*)realloc(stk->data, (stk->capacity*2 + 2)*sizeof(stack_value));
+    if (stk->data)
+    {
+        stk->capacity *= 2;
+        stk->data[stk->capacity + 1] = canary_r;
         return no_errors;
+    }
     else
+    {
+        stk->error |= memory_not_reallocated;
         return memory_not_reallocated;
+    }
     return no_errors;
 }
 
@@ -246,3 +278,54 @@ void stack_destructor(stack* stack)
 {
     free(stack->data);
 }
+
+int error_decoder(stack* stk)
+{
+    if (!stk)
+    {
+        printf("Null pointer to structure\n");
+        return 1;
+    }
+    size_t errors = stk->error;
+    if (errors & left_canary_is_died)
+        printf("left canary died\n");
+    if (errors & right_canary_is_died)
+        printf("right canary died\n");
+    if (errors & right_canary_is_died)
+        printf("right canary died\n");
+    if (errors & null_pointer_to_data)
+        printf("Null pointer to data\n");
+    if (errors & capacity_was_not_assigned)
+        printf("Capacity wasn't assigned\n");
+    if (errors & size_was_not_assigned)
+        printf("Size wasn't assigned\n");
+    if (errors & no_valid_size)
+        printf("Size isn't valid\n");
+    if (errors & memory_not_reallocated)
+        printf("Memory wasn't reallocated in calloc\n");
+    if (errors & size_more_capacity)
+        printf("Size more capacity\n");
+    if (errors & size_in_pop_is_null)
+        printf("Size in pop is null!\n");
+    if (errors & no_valid_campacity)
+        printf("No valid campacity\n");
+    return 0;
+    
+    
+}
+// enum stack_errors 
+// {
+//     no_errors = 0,
+//     errors_in_stack = 1,
+//     left_canary_is_died = 2,
+//     right_canary_is_died = 4,
+//     null_pointer_to_data = 8, 
+//     capacity_was_not_assigned = 16,
+//     size_was_not_assigned = 32, 
+//     no_valid_size = 64, 
+//     memory_not_reallocated = 128, 
+//     size_more_capacity = 256,
+//     size_in_pop_is_null = 512,
+//     no_valid_campacity = 1024, 
+//     null_pointer_to_structure
+// };
