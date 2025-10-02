@@ -5,18 +5,22 @@
 #define MATAN 666
 enum stack_errors 
 {
-    no_errors,
-    null_pointer_to_structure,
-    left_canary_is_died,
-    right_canary_is_died,
-    null_pointer_to_data, 
-    capacity_was_not_assigned,
-    size_was_not_assigned, 
-    no_valid_campacity, no_valid_size, 
-    memory_not_reallocated, 
-    size_more_capacity,
-    size_in_pop_is_null
+    no_errors = 0,
+    errors_in_stack = 1,
+    left_canary_is_died = 2,
+    right_canary_is_died = 4,
+    null_pointer_to_data = 8, 
+    capacity_was_not_assigned = 16,
+    size_was_not_assigned = 32, 
+    no_valid_size = 64, 
+    memory_not_reallocated = 128, 
+    size_more_capacity = 256,
+    size_in_pop_is_null = 512,
+    no_valid_campacity = 1024, 
+    null_pointer_to_structure
 };
+
+
 
 typedef int stack_value;
 const stack_value canary_l =  987149;
@@ -29,10 +33,10 @@ struct stack
     size_t error;
 };
 
-stack_errors stack_push(stack* borizsche_kolbassischkhzsche, stack_value jopa);
-stack_errors stack_creator(stack*, ssize_t);
-stack_errors stack_pop(stack*, stack_value*);
-stack_errors stack_err(stack*); //*
+stack_errors stack_push(stack* stk, stack_value value);
+stack_errors stack_creator(stack* stk, ssize_t capacity);
+stack_errors stack_pop(stack* stk, stack_value* pop_value);
+stack_errors stack_err(stack* stk);
 void stack_dumb(stack* stack);
 stack_errors widen_memory(stack_value** data, ssize_t capacity);
 void print_data(stack_value* data, ssize_t capacity);
@@ -44,27 +48,28 @@ int main()
 {
     stack stk1 = {0,0,0,0};
     stack_creator(&stk1, 5);
-    print_data(stk1.data, stk1.capacity);
+    //stack_dumb(&stk1);
+    //print_data(stk1.data, stk1.capacity);
 
     stack_value value = 10;
     stack_push(&stk1, value);
-    stack_dumb(&stk1);
-    print_data(stk1.data, stk1.capacity);
+    //stack_dumb(&stk1);
+    //print_data(stk1.data, stk1.capacity);
     
     value = 20;
     stack_push(&stk1, value);
-    stack_dumb(&stk1);
+    //stack_dumb(&stk1);
     
     stack_value pop_value = 0;
     stack_pop(&stk1, &pop_value);
-    stack_dumb(&stk1);
+    //stack_dumb(&stk1);
     printf("pop_value1 = %d\n", pop_value);
 
 
     stack_pop(&stk1, &pop_value);
     printf("pop_value2 = %d\n", pop_value);
-    stack_dumb(&stk1);
-    print_data(stk1.data, stk1.capacity);   
+    //stack_dumb(&stk1);
+    //print_data(stk1.data, stk1.capacity);   
     
     
     stack_destructor(&stk1);
@@ -82,15 +87,15 @@ stack_errors stack_creator(stack* stk, ssize_t capacity)
     stk->capacity = capacity;
     if (stk->capacity != capacity)
         return capacity_was_not_assigned;
-    
+    //printf("data nad capacity\n");
     stk->size = 0;
+    stk->data[0] = canary_l;
+    stk->data[capacity+1] = canary_r;
     if (stack_err(stk))
     {
         printf("Error after creating stack\n");
         return(stack_err(stk));
     }
-    stk->data[0] = canary_l;
-    stk->data[capacity+1] = canary_r;
     return no_errors;
 }
 
@@ -106,6 +111,7 @@ stack_errors stack_push(stack* stk, stack_value value)
         widen_memory(&(stk->data), stk->capacity);
         stk->capacity *= 2;
         stk->data[stk->capacity + 1] = canary_r;
+        
         if (!stk->data)
         {
             printf("Memory for the stack was not reallocated. Go and fuck you away.\n");
@@ -115,6 +121,8 @@ stack_errors stack_push(stack* stk, stack_value value)
     
     stk->data[stk->size+1] = value;
     stk->size++;
+
+
     return no_errors;
 }
 
@@ -122,15 +130,19 @@ stack_errors stack_push(stack* stk, stack_value value)
 stack_errors stack_pop(stack* stk, stack_value* pop_value)
 {
     if (stack_err(stk))
-        {
-            printf("Error before stack_pop\n");
-            return stack_err(stk);
-        }
+    {
+        printf("Error before stack_pop\n");
+        return stack_err(stk);
+    }
+
+
     if (stk->size == 0)
     {
         printf("Stack size = 0");
         return size_in_pop_is_null;
     }
+
+
     *pop_value = stk->data[stk->size];
     stk->data[stk->size] = MATAN;
     stk->size--;
@@ -147,22 +159,40 @@ stack_errors stack_pop(stack* stk, stack_value* pop_value)
 stack_errors stack_err(stack* stk)
 {
     if (!stk)
+    {
+        printf("Null pointer_to struct\n");
         return null_pointer_to_structure;
-
+    }
     if ((stk->data)[0] != canary_l)
+    {
+        stk->error |= left_canary_is_died; 
+        printf("left canary died\n");
         return left_canary_is_died;
+    }
     if ((stk->data)[stk->capacity + 1] != canary_r)
+    {
+        stk->error |= right_canary_is_died; 
+        printf("right canary died\n");
         return right_canary_is_died;
-
+    }
     if (stk->capacity < 0)
+    {
+        stk->error |= no_valid_campacity;
+        printf("no valid campacity\n");
         return no_valid_campacity;
-    
+    }
     if (stk->size < 0)
+    {
+        stk->error |= no_valid_size;
+        printf("no valid size\n");
         return no_valid_size;
-        
-    if (stk->size>stk->capacity)
+    }   
+    if (stk->size > stk->capacity)
+    {
+        stk->error |= size_more_capacity;
+        printf("stack_size more stack_capacity\n");
         return size_more_capacity;    
-    
+    }
     return no_errors;
 }
 
