@@ -1,16 +1,19 @@
 #include <TXLib.h>
 #include <stdio.h>
+#include <math.h>
+#include "commands.h"
 
 #define Max_size_t_value 1000000000
 #define MATAN 666
-//#define Is_everything_OK(stk) if(stk.error != 0){printf("something is wrong\n"); stack_dumb(&stk); return 0;}
 #define IS_work(func) if(func){return 0;}
+//#define dump(x) stack_dump(x, __FILE__, __LINE__)
+
 enum stack_errors 
 {
     no_errors = 0,
     errors_in_stack = 1,
-    left_canary_is_died = 2,
-    right_canary_is_died = 4,
+    left_canary_died = 2,
+    right_canary_died = 4,
     null_pointer_to_data = 8, 
     capacity_was_not_assigned = 16,
     size_was_not_assigned = 32, 
@@ -21,7 +24,6 @@ enum stack_errors
     no_valid_campacity = 1024, 
     null_pointer_to_structure
 };
-
 
 
 typedef int stack_value;
@@ -39,50 +41,50 @@ stack_errors stack_push(stack* stk, stack_value value);
 stack_errors stack_creator(stack* stk, ssize_t capacity);
 stack_errors stack_pop(stack* stk, stack_value* pop_value);
 stack_errors stack_err(stack* stk);
-void stack_dumb(stack* stack);
+void stack_dump(stack* stack, const char* file , const int line );
 stack_errors widen_memory(stack* stk);
 void print_data(stack_value* data, ssize_t capacity);
 void stack_destructor(stack* stack);
 int error_decoder(stack* stk);
-
+void calculator(stack* stack);
 
 
 int main()
 {
     stack stk1 = {0,0,0,0};
     stack_creator(&stk1, 5);
-    //Is_everything_OK(stk1)
-    //stack_dumb(&stk1);
-    //print_data(stk1.data, stk1.capacity);
+    // //Is_everything_OK(stk1)
+    // //stack_dump(&stk1);
+    // //print_data(stk1.data, stk1.capacity);
 
-    stack_value value = 10;
-    stack_push(&stk1, value);
-    IS_work(stack_push(&stk1, value));
+    // stack_value value = 10;
+    // stack_push(&stk1, value);
+    // IS_work(stack_push(&stk1, value));
     
-    //stack_dumb(&stk1);
-    //print_data(stk1.data, stk1.capacity);
+    // //stack_dump(&stk1);
+    // //print_data(stk1.data, stk1.capacity);
     
-    value = 20;
-    IS_work(stack_push(&stk1, value));
-    //stack_dumb(&stk1);
+    // value = 20;
+    // IS_work(stack_push(&stk1, value));
+    // //stack_dump(&stk1);
     
-    stack_value pop_value = 0;
-    IS_work(stack_pop(&stk1, &pop_value));
-    //stack_dumb(&stk1);
-    printf("pop_value1 = %d\n", pop_value);
+    // stack_value pop_value = 0;
+    // IS_work(stack_pop(&stk1, &pop_value));
+    // //stack_dump(&stk1);
+    // printf("pop_value1 = %d\n", pop_value);
 
 
-    IS_work(stack_pop(&stk1, &pop_value));
-    printf("pop_value2 = %d\n", pop_value);
-    IS_work(stack_pop(&stk1, &pop_value));
-    printf("pop_value3 = %d\n", pop_value);
-    IS_work(stack_pop(&stk1, &pop_value));
+    // IS_work(stack_pop(&stk1, &pop_value));
+    // printf("pop_value2 = %d\n", pop_value);
+    // IS_work(stack_pop(&stk1, &pop_value));
+    // printf("pop_value3 = %d\n", pop_value);
+    // IS_work(stack_pop(&stk1, &pop_value));
 
 
-    //stack_dumb(&stk1);
+    //stack_dump(&stk1);
     //print_data(stk1.data, stk1.capacity);   
-    
-    
+    calculator(&stk1);
+
     stack_destructor(&stk1);
     return 0;
 }
@@ -176,21 +178,21 @@ stack_errors stack_err(stack* stk)
 {
     if (!stk)
     {
-        stack_dumb(stk);
+        stack_dump(stk, __FILE__, __LINE__);
         printf("Null pointer_to struct\n");
         return null_pointer_to_structure;
     }
     if ((stk->data)[0] != canary_l)
     {
-        stk->error |= left_canary_is_died; 
+        stk->error |= left_canary_died; 
         printf("left canary died\n");
-        //return left_canary_is_died;
+        //return left_canary_died;
     }
     if ((stk->data)[stk->capacity + 1] != canary_r)
     {
-        stk->error |= right_canary_is_died; 
+        stk->error |= right_canary_died; 
         printf("right canary died\n");
-        //return right_canary_is_died;
+        //return right_canary_died;
     }
     if (stk->capacity < 0)
     {
@@ -212,14 +214,15 @@ stack_errors stack_err(stack* stk)
     }
     if(stk->error != 0)
     {
-        stack_dumb(stk);
+        stack_dump(stk, __FILE__, __LINE__);
         return errors_in_stack;
     }
     return no_errors;
 }
 
-void stack_dumb(stack* stack)
+void stack_dump(stack* stack, const char* file, const int line)
 {
+    printf("%s:%d\n", file, line);
     void* stack_pointer = stack;
     
     
@@ -286,46 +289,103 @@ int error_decoder(stack* stk)
         printf("Null pointer to structure\n");
         return 1;
     }
+
     size_t errors = stk->error;
-    if (errors & left_canary_is_died)
+
+    if (errors & left_canary_died)
         printf("left canary died\n");
-    if (errors & right_canary_is_died)
+
+    if (errors & right_canary_died)
         printf("right canary died\n");
-    if (errors & right_canary_is_died)
+    
+    if (errors & right_canary_died)
         printf("right canary died\n");
+
     if (errors & null_pointer_to_data)
         printf("Null pointer to data\n");
+    
     if (errors & capacity_was_not_assigned)
         printf("Capacity wasn't assigned\n");
+    
     if (errors & size_was_not_assigned)
         printf("Size wasn't assigned\n");
+    
     if (errors & no_valid_size)
         printf("Size isn't valid\n");
+    
     if (errors & memory_not_reallocated)
         printf("Memory wasn't reallocated in calloc\n");
+
     if (errors & size_more_capacity)
         printf("Size more capacity\n");
+    
     if (errors & size_in_pop_is_null)
         printf("Size in pop is null!\n");
+
     if (errors & no_valid_campacity)
         printf("No valid campacity\n");
+    
     return 0;
-    
-    
 }
-// enum stack_errors 
-// {
-//     no_errors = 0,
-//     errors_in_stack = 1,
-//     left_canary_is_died = 2,
-//     right_canary_is_died = 4,
-//     null_pointer_to_data = 8, 
-//     capacity_was_not_assigned = 16,
-//     size_was_not_assigned = 32, 
-//     no_valid_size = 64, 
-//     memory_not_reallocated = 128, 
-//     size_more_capacity = 256,
-//     size_in_pop_is_null = 512,
-//     no_valid_campacity = 1024, 
-//     null_pointer_to_structure
-// };
+
+
+void calculator(stack* stack)
+{
+    char command[10] = {};
+    stack_value value = 0, pop_value1 = 0, pop_value2 = 0; 
+    scanf("%s", command);
+    while(strcmp(command, "HLT"))
+    {
+        if(!strcmp(command,"PUSH"))
+        {
+            scanf("%d", &value);
+            stack_push(stack, value);
+        }
+        else if(!strcmp(command,"ADD"))
+        {
+            stack_pop(stack, &pop_value1);
+            stack_pop(stack, &pop_value2);
+            stack_push(stack, pop_value2 + pop_value1);
+        }
+        
+        else if(!strcmp(command,"SUB"))
+        {
+            stack_pop(stack, &pop_value1);
+            stack_pop(stack, &pop_value2);
+            stack_push(stack, pop_value2 - pop_value1);
+        }
+
+        else if(!strcmp(command,"MUL"))
+        {
+            stack_pop(stack, &pop_value1);
+            stack_pop(stack, &pop_value2);
+            stack_push(stack, pop_value2 * pop_value1);
+        }
+
+        else if(!strcmp(command,"DIV"))
+        {
+            stack_pop(stack, &pop_value1);
+            stack_pop(stack, &pop_value2);
+            stack_push(stack, pop_value2 / pop_value1);
+        }
+
+        else if(!strcmp(command,"SQVRT"))
+        {
+            stack_pop(stack, &pop_value1);
+            stack_push(stack, sqrt(pop_value1));
+        }
+
+        else if(!strcmp(command,"OUT"))
+        {
+            stack_pop(stack, &pop_value1);
+            printf("Out value is %d\n", pop_value1);
+        }
+
+        else
+        {
+            printf("I don't know this command");
+        }
+        scanf("%s", command);
+    }
+}
+
