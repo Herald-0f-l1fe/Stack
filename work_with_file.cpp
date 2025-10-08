@@ -5,6 +5,10 @@
 #include "..\Onegin\output_text_and_pointers_arr.h"
 
 
+strings* array_of_pointers_only(char*, int);    
+
+void free_all(strings*, char*, FILE*);
+
 
 
 char* read_from_file_to_buffer(long int* size, const char* str)
@@ -61,4 +65,31 @@ FILE* open_output_file(const char* output_file_name)
     }
         return file;
     
+}
+
+strings* array_of_pointers_only(char* buffer, int cnt)
+{
+    strings* array = (strings*)calloc(cnt, sizeof(strings));
+    if (array == 0)
+        printf("Memory for the only_pointer_arr was not allocated.\n");
+    
+    char* buffer1 = strchr(buffer, '\n');
+    array[0].pointer = buffer;
+    array[0].len = strchr(buffer, '\n') - array[0].pointer;
+    
+    for (int i = 1; i < cnt && buffer1 != NULL; i++)
+    {
+        while (*(buffer1 + 1) == '\n')
+        {
+            buffer1++;
+        }
+    
+        array[i].pointer = buffer1 + 1;
+        array[i].len = strchr(buffer1 + 1, '\n') - array[i].pointer;
+        buffer1 = strchr(buffer1 + 1, '\n');
+    
+        //printf("array[%d].pointer = %p\narray[%d].len = %lld\n", i, array[i].pointer, i, array[i].len);
+    }
+    
+    return array;
 }

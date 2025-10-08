@@ -1,0 +1,16 @@
+all: spu
+
+spu: stack_protection.o spu.o stack_operations.o
+	g++ spu.o stack_protection.o stack_operations.o -g -o spu
+
+stack_protection.o: stack_protection.cpp
+	g++ -c stack_protection.cpp
+
+stack_operations.o: stack_operations.cpp
+	g++ -c stack_operations.cpp
+
+spu.o: spu.cpp
+	g++ -c spu.cpp
+
+clean:
+	rm -rf *.o  *.exe *.dmp *.log *.log.dmp *.exe.log.dmp spu	
