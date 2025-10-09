@@ -1,6 +1,10 @@
 #ifndef COM
 #define COM
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include </usr/include/strings.h>
 enum commands
 {
     PUSH = 0,
@@ -21,6 +25,7 @@ enum commands
     JNE = 15,
     DISKR = 16,
     SQUARE = 17,
+    LABEL = 18,
     PUSHREG = 33,
     POPREG = 38,
 };

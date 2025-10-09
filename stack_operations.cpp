@@ -1,4 +1,4 @@
-#include <TXLib.h>
+//#include <TXLib.h>
 #include <stdio.h>
 #include <math.h>
 #include "commands.h"
@@ -14,11 +14,9 @@ stack_errors stack_push(stack* stk, stack_value value)
     
     if (stk->size == stk->capacity)
     {
-        //stk->data = (stack_value*)realloc(stk->data, (stk->capacity*2 + 2)sizeof(stack_value));
-        widen_memory(stk);
-        // stk->capacity *= 2;
-        // stk->data[stk->capacity + 1] = canary_r;
         
+        widen_memory(stk);
+
         if (!stk->data)
         {
             printf("Memory for the stack was not reallocated. Go and fuck you away.\n");
@@ -104,6 +102,7 @@ stack_errors stack_creator(stack* stk, ssize_t capacity)
     stk->size = 0;
     stk->data[0] = canary_l;
     stk->data[capacity+1] = canary_r;
+
     if (stack_err(stk))
     {
         printf("Error after creating stack\n");

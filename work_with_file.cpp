@@ -1,4 +1,4 @@
-#include <TXLib.h>
+//#include <TXLib.h>
 #include <stdio.h>
 #include <string.h>
 #include "..\Onegin\read_from_file_to_buffer.h"
@@ -21,7 +21,7 @@ char* read_from_file_to_buffer(long int* size, const char* str)
     //printf("meow\n");
 
     char* buffer = filling_the_buffer_with_text(*size, fp);
-
+    
     fclose(fp);
     return buffer;
 }
@@ -50,7 +50,10 @@ char* filling_the_buffer_with_text(long int size, FILE* fp)
         return 0;
         }
     size_t buffer_size = fread(buffer, sizeof(char), size, fp);
-
+    if (!buffer)
+    {
+        printf("Nullpointer to buffer, smth went wrong with read text from file\n");
+    }
     buffer[buffer_size++] = '\n';
     buffer[buffer_size++] = '\0';
     return buffer;

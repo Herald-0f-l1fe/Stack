@@ -1,11 +1,20 @@
-#include <TXLib.h>
+//#include <TXLib.h>
 #include <stdio.h>
 #include <string.h>
-#include "..\Onegin\read_from_file_to_buffer.h"
-#include "..\Onegin\output_text_and_pointers_arr.h"
+#include <stdlib.h>
+#include "../Onegin/read_from_file_to_buffer.h"
+#include "../Onegin/output_text_and_pointers_arr.h"
+struct asms {
+    int* byte_code;
+    int* labels;
+    int cnt;
+    size_t pc;
+    size_t capacity;
+    strings* array;
+};
 
-
-strings* array_of_pointers_only(char*, int); 
+strings* array_of_pointers_only(char*, asms*); 
+void n_to_o(strings* arr, int cnt);
 
 
 char* read_from_file_to_buffer(long int* size, const char* str)
@@ -52,9 +61,9 @@ char* filling_the_buffer_with_text(long int size, FILE* fp)
     return buffer;
 }
 
-strings* array_of_pointers_only(char* buffer, int cnt)
+strings* array_of_pointers_only(char* buffer, asms* asm1)
 {
-    strings* array = (strings*)calloc(cnt, sizeof(strings));
+    strings* array = (strings*)calloc(asm1->cnt, sizeof(strings));
     if (array == 0)
         printf("Memory for the only_pointer_arr was not allocated.\n");
     
@@ -62,7 +71,7 @@ strings* array_of_pointers_only(char* buffer, int cnt)
     array[0].pointer = buffer;
     array[0].len = strchr(buffer, '\n') - array[0].pointer;
     
-    for (int i = 1; i < cnt && buffer1 != NULL; i++)
+    for (int i = 1; i < asm1->cnt && buffer1 != NULL; i++)
     {
         while (*(buffer1 + 1) == '\n')
         {
@@ -72,10 +81,8 @@ strings* array_of_pointers_only(char* buffer, int cnt)
         array[i].pointer = buffer1 + 1;
         array[i].len = strchr(buffer1 + 1, '\n') - array[i].pointer;
         buffer1 = strchr(buffer1 + 1, '\n');
-    
-        //printf("array[%d].pointer = %p\narray[%d].len = %lld\n", i, array[i].pointer, i, array[i].len);
     }
-    
+    //n_to_o(array, cnt);
     return array;
 }
 
@@ -99,4 +106,12 @@ int line_counter(char* buffer)
     }
 
     return cnt;
+}
+
+void n_to_o(strings* arr, int cnt)
+{
+   for (int i = 0; i < cnt; i++)
+   {
+        arr[i].pointer[arr[i].len - 1] = '\0';
+   }
 }

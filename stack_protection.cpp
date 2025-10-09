@@ -1,4 +1,4 @@
-#include <TXLib.h>
+//#include <TXLib.h>
 #include <stdio.h>
 #include <math.h>
 #include "commands.h"
@@ -109,7 +109,7 @@ void stack_dump(stack* stack, const char* file, const int line)
     printf("%s:%d\n", file, line);
     void* stack_pointer = stack;
     
-    
+
     if (!error_decoder(stack))
     {
         ssize_t size = stack->size;
@@ -129,8 +129,6 @@ void stack_dump(stack* stack, const char* file, const int line)
             printf("%d\n", data[i]);
 
         printf("That's all, folks\n");
-    //free(data);
-    //data ++; 
     }
     else
     {

@@ -1,5 +1,6 @@
-#include <TXLib.h>
+//#include <TXLib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include "commands.h"
 #include "everything_about_stack.h"
@@ -22,6 +23,7 @@ struct sput
 void calculator(stack* stack);
 int* code_creator(FILE* fp);
 void code_calculator(sput* spu);
+
 
 
 int main()

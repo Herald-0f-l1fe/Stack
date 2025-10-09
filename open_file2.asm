@@ -1,14 +1,15 @@
-push 1
-popreg A
-pushreg A
-pushreg A
-mul
-out
-pushreg A
-push 1
-add
-popreg A
-pushreg A
-push 10
-JB 4
+PUSH 1
+POPREG A
+:1
+PUSHREG A
+PUSHREG A
+MUL
+OUT
+PUSHREG A
+PUSH 1
+ADD
+POPREG A
+PUSHREG A
+PUSH 10
+JB :1 
 HLT

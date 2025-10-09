@@ -1,5 +1,5 @@
 PUSH 1
-PUSH 4 ;надо сделать проверку на \n и псевдопустую строку
+PUSH 4 
 PUSH 4
 DISKR
 POPREG D
@@ -26,7 +26,6 @@ PUSHREG A
 MUL
 DIV
 OUT
-PUSH 111
 PUSH -1
 PUSHREG B
 MUL
