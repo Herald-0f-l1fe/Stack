@@ -16,7 +16,6 @@ strings* array_of_pointers_only(char*, asms*);
 void widen_memory_for_byte_code(int** byte_code, size_t* capacity, size_t pc);
 strings* read_file(const char* file_name, long int* file_size, asms* asm1);
 void compiler(asms* asm1);
-int diskr(int* byte_code, size_t* capacity, int pc);
 void byte_code_to_file(const char* output_file_name, int* byte_code, size_t pc);
 
 
@@ -24,17 +23,25 @@ int main()
 {
     asms asm1 = {0, 0, 0, 0, 0, 0};
     long int file_size = 0;
-    const char* str = "open_file2.asm";
+    const char* str = "open_file.asm";
     const char* output_file_name = "test.txt";
     asm1.pc = 0;
     asm1.capacity = 1000000;
     asm1.byte_code = (int*) calloc(asm1.capacity, sizeof(int));
     asm1.cnt = 0;
-    int lab[10] = {-1}; 
+    int label_size = 10;
+    int lab[10] = {}; 
     asm1.labels = lab;
 
     asm1.array = read_file(str, &file_size, &asm1);
+    
+    for(int i = 0; i < label_size; i++)
+        printf("label[%d] = %d\n", i, asm1.labels[i]);
     compiler(&asm1);
+    asm1.pc = 0;
+    compiler(&asm1);
+    for(int i = 0; i < label_size; i++)
+        printf("label[%d] = %d\n", i,  asm1.labels[i]);
     byte_code_to_file(output_file_name, asm1.byte_code, asm1.pc);
     free(asm1.byte_code);
     free(asm1.array[0].pointer);
@@ -45,7 +52,7 @@ int main()
 int command_check(char* com, int line)
 {
     int com_namb = 8;
-    if(!strcmp(com, "HLT"))
+    if (!strcmp(com, "HLT"))
         com_namb = HLT;
 
     else if(!strcmp(com, "PUSH"))
@@ -96,14 +103,20 @@ int command_check(char* com, int line)
     else if(!strcmp(com, "JNE"))
         com_namb = JNE;
 
-    else if(!strcmp(com, "DISKR"))
-        com_namb = DISKR;
+    else if(!strcmp(com, "RET"))
+        com_namb = RET;
+
+    else if (!strcmp(com, "CALL"))
+        com_namb = CALL;
+    
+    else if (!strcmp(com, "IN"))
+        com_namb = IN;
+
     else if(com[0] == ':')
-        return LABEL;
+        com_namb = LABEL;
     else
         printf("I don't know this command, line %d\n", line);
-
-    com = {0};
+    
     return com_namb;
 }
 
@@ -138,7 +151,8 @@ void compiler(asms* asm1)
         int value = 1234567;
         char cvalue = 0;
         int com_count = sscanf(asm1->array[i].pointer,"%s %d", command, &value);
-        printf("%s %d %d\n", command, value, com_count);
+        //printf("%s %d %d\n", command, value, com_count);
+        printf("%s %d\n", command, value);
         int com_namb = command_check(command, i);
         if (com_count == 2)
         {
@@ -153,18 +167,12 @@ void compiler(asms* asm1)
             asm1->byte_code[pc++] = com_namb;
             asm1->byte_code[pc++] = (int)cvalue;            
         }
-        else if(com_namb == DISKR)
-        {
-            for (int j = 0; j < pc; j++)
-                printf("%d ", asm1->byte_code[j]);
-            pc = diskr(asm1->byte_code, &(asm1->capacity), pc);
-        }
         else if(com_namb == LABEL)
         {
             sscanf(asm1->array[i].pointer, ":%d", &value);
             asm1->labels[value] = pc;
         }
-        else if(command[0] == 'J')
+        else if(command[0] == 'J' || com_namb == CALL)
         {
             if (sscanf(asm1->array[i].pointer, "%*s :%d", &value) == 1)
             {
@@ -180,55 +188,8 @@ void compiler(asms* asm1)
         }
         asm1->pc = (size_t)pc;
     }
-    
 } 
 
-int diskr(int* byte_code, size_t* capacity, int pc)
-{
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    printf("--------%d-----%d-----\n", pc, *capacity);
-    byte_code[pc++] = POPREG;
-    byte_code[pc++] = int('C');
-
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = POPREG;
-    byte_code[pc++] = int('B');
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = POPREG;
-    byte_code[pc++] = int('A');
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = PUSHREG;
-    byte_code[pc++] = int('B');
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = PUSHREG;
-    byte_code[pc++] = int('B');
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = MUL;
-    byte_code[pc++] = PUSHREG;
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = int('A');
-    byte_code[pc++] = PUSHREG;
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = int('C');
-    byte_code[pc++] = PUSH;
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = 4;
-    byte_code[pc++] = MUL;
-    
-    //widen_memory_for_byte_code(&byte_code, capacity, *pc);
-    byte_code[pc++] = MUL;
-    byte_code[pc++] = SUB;
-    printf("======%d ======", pc);
-    return pc;
-}
 
 
 void byte_code_to_file(const char* output_file_name, int* byte_code, size_t pc)

@@ -48,13 +48,13 @@ long int finding_file_size(const char* str)
 
 char* filling_the_buffer_with_text(long int size, FILE* fp)
 {
-    char* buffer = (char*) calloc(size + 2, sizeof(char));
+    char* buffer = (char*) calloc((size_t)size + 2, sizeof(char));
     if (buffer == nullptr)
         {
         printf("Memory for the buffer was not allocated.\n");
         return 0;
         }
-    size_t buffer_size = fread(buffer, sizeof(char), size, fp);
+    size_t buffer_size = fread(buffer, sizeof(char), (size_t) size, fp);
 
     buffer[buffer_size++] = '\n';
     buffer[buffer_size++] = '\0';
@@ -63,7 +63,7 @@ char* filling_the_buffer_with_text(long int size, FILE* fp)
 
 strings* array_of_pointers_only(char* buffer, asms* asm1)
 {
-    strings* array = (strings*)calloc(asm1->cnt, sizeof(strings));
+    strings* array = (strings*)calloc((size_t)asm1->cnt, sizeof(strings));
     if (array == 0)
         printf("Memory for the only_pointer_arr was not allocated.\n");
     

@@ -6,7 +6,7 @@
 #include "stack_protection.h"
 
 
-int error_decoder(stack* stk)
+int error_decoder(stk_t* stk)
 {
     if (!stk)
     {
@@ -46,53 +46,50 @@ int error_decoder(stack* stk)
     if (errors & size_in_pop_is_null)
         printf("Size in pop is null!\n");
 
-    if (errors & no_valid_campacity)
+    if (errors & data_is_null)
         printf("No valid campacity\n");
-    
+    if (errors & data_is_null)
+        printf("Pointer to data is null in stack_creator\n");
     return 0;
 }
 
-stack_errors stack_err(stack* stk)
+stack_errors stack_err(stk_t* stk)
 {
     if (!stk)
     {
-        stack_dump(stk, __FILE__, __LINE__);
+        stack_dump(stk, __FILE__, __LINE__, __FUNCTION__);
         printf("Null pointer_to struct\n");
         return null_pointer_to_structure;
     }
-    if ((stk->data)[0] != canary_l)
+
+    if (stk->data[0] != Сanary_l)
     {
         stk->error |= left_canary_died; 
         printf("left canary died\n");
-        //return left_canary_died;
     }
-    if ((stk->data)[stk->capacity + 1] != canary_r)
+    if ((stk->data)[stk->capacity + 1] != Сanary_r)
     {
         stk->error |= right_canary_died; 
         printf("right canary died\n");
-        //return right_canary_died;
     }
     if (stk->capacity < 0)
     {
         stk->error |= no_valid_campacity;
         printf("no valid campacity\n");
-        //return no_valid_campacity;
     }
     if (stk->size < 0)
     {
         stk->error |= no_valid_size;
         printf("no valid size\n");
-        //return no_valid_size;
     }   
     if (stk->size > stk->capacity)
     {
         stk->error |= size_more_capacity;
-        printf("stack_size more stack_capacity\n");
-        //return size_more_capacity;    
+        printf("stack_size more stack_capacity\n");    
     }
     if(stk->error != 0)
     {
-        stack_dump(stk, __FILE__, __LINE__);
+        stack_dump(stk, __FILE__, __LINE__, __FUNCTION__);
         return errors_in_stack;
     }
     return no_errors;
@@ -104,9 +101,9 @@ void print_data(stack_value* data, ssize_t capacity)
         printf("$%d\n", data[i]);
 }
 
-void stack_dump(stack* stack, const char* file, const int line)
+void stack_dump(stk_t* stack, const char* file, const int line, const char* func)
 {
-    printf("%s:%d\n", file, line);
+    printf("StackDump called from %s:%d in function %s()\n", file, line, func);
     void* stack_pointer = stack;
     
 

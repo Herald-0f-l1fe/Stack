@@ -1,11 +1,14 @@
 #ifndef EVERY
-#define EVERY
-#include <ctype.h>
-typedef int stack_value;
-const stack_value canary_l =  987149;
-const stack_value canary_r = 12648430;
 
-struct stack 
+#define EVERY
+
+#include <ctype.h>
+
+typedef int stack_value;
+const stack_value Сanary_l =  987149;
+const stack_value Сanary_r = 12648430;
+
+struct stk_t           // stack_t
 {
     stack_value* data;
     ssize_t size;
@@ -27,7 +30,8 @@ enum stack_errors
     size_more_capacity = 256,
     size_in_pop_is_null = 512,
     no_valid_campacity = 1024, 
-    null_pointer_to_structure
+    data_is_null = 2048,
+    null_pointer_to_structure = 4096
 };
 
 

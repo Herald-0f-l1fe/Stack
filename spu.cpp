@@ -8,46 +8,40 @@
 #include "stack_operations.h"
 
 #define Max_size_t_value 100000000
-#define IS_work(func) if(func){return 0;}
-//#define dump(x) stack_dump(x, __FILE__, __LINE__)
+#define XXXL(func) if(func){spu_dump(spu, __FILE__, __FUNCTION__, __LINE__); return 0;}
 
 
-struct sput 
+struct sput_t 
 {
     int* code;
     size_t pc;
-    stack* stk; //поменять название структуры на stkt, а stk на stack
+    stk_t* stack;
+    stk_t* ret;
     int* regs;
+    size_t size;
 };
 
-void calculator(stack* stack);
-int* code_creator(FILE* fp);
-void code_calculator(sput* spu);
-
+void calculator(stk_t* stack);
+int* code_creator(FILE* fp, size_t* size);
+int code_calculator(sput_t* spu);
+void spu_creator(sput_t* spu, const char* read_file_name, stk_t* stk1, stk_t* ret);
+void spu_destructor(sput_t* spu);
+int spu_dump(sput_t* spu, const char* file, const char* func, int line);
 
 
 int main()
 {
-    stack stk1 = {0,0,0,0};
-    stack_creator(&stk1, 5);
     const char* str = "test.txt";
-    FILE* fp = fopen(str, "r");
-
-    if (fp == nullptr) // NULL
-        printf("File %s didn't open\n", str);
-    int* regs = (int*) calloc(8, sizeof(int));
-
-    int* code = code_creator(fp);
-
-    sput spu = {code, 0, &stk1, regs};
-
+    sput_t spu = {0, 0, 0, 0, 0, 0};
+    stk_t stk1 = {0, 0, 0, 0};
+    stk_t stk_ret ={0, 0, 0, 0};
+    spu_creator(&spu, str, &stk1, &stk_ret);
     code_calculator(&spu);
-    stack_destructor(&stk1);
-    
+    spu_destructor(&spu);
     return 0;
 }
 
-void calculator(stack* stk)
+/*void calculator(stk_t* stk)
 {
     char command[10] = {};
     stack_value value = 0, pop_value1 = 0, pop_value2 = 0; 
@@ -57,45 +51,45 @@ void calculator(stack* stk)
         if(!strcmp(command,"PUSH"))
         {
             scanf("%d", &value);
-            stack_push(stk, value);
+            XXXL(stack_push(stk, value);
         }
-        else if(!strcmp(command,"ADD"))
+   )     else if(!strcmp(command,"ADD"))
         {
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
-            stack_push(stk, pop_value2 + pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
+            XXXL(stack_push(stk, pop_value2 + pop_valu)e1);
         }
         
         else if(!strcmp(command,"SUB"))
         {
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
-            stack_push(stk, pop_value2 - pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
+            XXXL(stack_push(stk, pop_value2 - pop_valu)e1);
         }
 
         else if(!strcmp(command,"MUL"))
         {
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
-            stack_push(stk, pop_value2 * pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
+            XXXL(stack_push(stk, pop_value2 * pop_valu)e1);
         }
 
         else if(!strcmp(command,"DIV"))
         {
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
-            stack_push(stk, pop_value2 / pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
+            XXXL(stack_push(stk, pop_value2 / pop_valu)e1);
         }
 
         else if(!strcmp(command,"SQVRT"))
         {
-            stack_pop(stk, &pop_value1);
-            stack_push(stk, sqrt((int)pop_value1));
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_push(stk, (int)sqrt(pop_value1)));
         }
 
         else if(!strcmp(command,"OUT"))
         {
-            stack_pop(stk, &pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
             printf("Out value is %d\n", pop_value1);
         }
 
@@ -105,36 +99,32 @@ void calculator(stack* stk)
         }
         scanf("%s", command);
     }
-}
+}*/
 
-
-
-int* code_creator(FILE* fp)
+int* code_creator(FILE* fp, size_t* size)
 {
     int code_size = 10;
-    int* code = (int*)calloc(code_size, sizeof(int));
+    size = 0;
+    int* code = (int*)calloc((size_t)code_size, sizeof(int));
     int code_pointer = 0; 
     while(fscanf(fp,"%d", &code[code_pointer++]) != EOF)
     {
         if (code_pointer == code_size)
         {
             code_size *= 2;
-            code = (int*) realloc(code, code_size*sizeof(int));
+            code = (int*) realloc(code, (size_t)code_size*sizeof(int));
         }
+        *size++;
     }
     code[code_pointer] = HLT;
 
     return code;
 }
 
-
-
-
-
-void code_calculator(sput* spu)
+int code_calculator(sput_t* spu)
 {
     stack_value value = 0, pop_value1 = 0, pop_value2 = 0;
-    stack* stk = spu->stk;
+    stk_t* stk = spu->stack;
     int com = spu->code[spu->pc++];
     int reg_namb = 0;
     while(com != HLT)
@@ -143,98 +133,150 @@ void code_calculator(sput* spu)
         {
         case PUSH:
             value = spu->code[spu->pc++];
-            stack_push(stk, value);
+            XXXL(stack_push(stk, value));
             break;
         case ADD:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
-            stack_push(stk, pop_value2 + pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
+            XXXL(stack_push(stk, pop_value2 + pop_value1));
             break;
         case SUB:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
-            stack_push(stk, pop_value2 - pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
+            XXXL(stack_push(stk, pop_value2 - pop_value1));
             break;
         case MUL:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
-            stack_push(stk, pop_value2 * pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
+            XXXL(stack_push(stk, pop_value2 * pop_value1));
             break;
         case DIV:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
-            stack_push(stk, pop_value2 / pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
+            XXXL(stack_push(stk, pop_value2 / pop_value1));
             break;
         case SQVRT:
-            stack_pop(stk, &pop_value1);
-            stack_push(stk, sqrt(pop_value1));
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_push(stk, (int)sqrt(pop_value1)));
             break;
         case OUTP:
-            stack_pop(stk, &pop_value1);
+            XXXL(stack_pop(stk, &pop_value1));
             printf("Out value is %d\n", pop_value1);
             break;
         case PUSHREG:
             reg_namb = spu->code[spu->pc++] -(int)'A';
-            stack_push(stk, spu->regs[reg_namb]);
+            XXXL(stack_push(stk, spu->regs[reg_namb]));
             break;
         case POPREG:
             reg_namb = spu->code[spu->pc++] - (int)'A';
-            stack_pop(stk, &(spu->regs[reg_namb]));
+            XXXL(stack_pop(stk, &(spu->regs[reg_namb])));
             break;
         case JMP:
-            spu->pc = spu->code[spu->pc];
+            spu->pc = (size_t)spu->code[spu->pc];
             break;
         case JB:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
             if(pop_value2<pop_value1)
-                spu->pc = spu->code[spu->pc];
+                spu->pc = (size_t)spu->code[spu->pc];
             else
                 spu->pc++;
             break;
         case JBE:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
             if(pop_value2 <= pop_value1)
-                spu->pc = spu->code[spu->pc];
+                spu->pc = (size_t)spu->code[spu->pc];
             else
                 spu->pc++;
             break;
         case JA:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
             if(pop_value2 > pop_value1)
-                spu->pc = spu->code[spu->pc];
+                spu->pc = (size_t)spu->code[spu->pc];
             else
                 spu->pc++;
             break;
         case JAE:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
             if(pop_value2 >= pop_value1)
-                spu->pc = spu->code[spu->pc];
+                spu->pc = (size_t)spu->code[spu->pc];
             else
                 spu->pc++;
             break;
         case JE:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
             if(pop_value2 == pop_value1)
-                spu->pc = spu->code[spu->pc];
+                spu->pc = (size_t)spu->code[spu->pc];
             else
                 spu->pc++;
             break;
         case JNE:
-            stack_pop(stk, &pop_value1);
-            stack_pop(stk, &pop_value2);
+            XXXL(stack_pop(stk, &pop_value1));
+            XXXL(stack_pop(stk, &pop_value2));
             if(pop_value2 != pop_value1)
-                spu->pc = spu->code[spu->pc];
+                spu->pc = (size_t)spu->code[spu->pc];
             else
                 spu->pc++;
+            break;
+        case CALL:
+            XXXL(stack_push(spu->ret, (int)spu->pc + 1));
+            spu->pc = (size_t)spu->code[spu->pc];
+            break;
+        case RET:
+            XXXL(stack_pop(spu->ret, &pop_value1));
+            spu->pc = (size_t)pop_value1;
+            break;
+        case IN:
+            scanf("%d", &value);
+            XXXL(stack_push(stk, value));
             break;
         default:
             printf("I don't know this command\n");
         }
         com = spu->code[spu->pc++];
     }
+    return 0;
+}
+
+void spu_creator(sput_t* spu, const char* read_file_name, stk_t* stk1, stk_t* ret)
+{
+    stack_creator(stk1, 10);
+    stack_creator(ret, 10);
+    spu->ret = ret;
+    spu->stack = stk1;
+    //print_data(spu->stk->data, spu->stk->capacity);
+    spu->regs = (int*) calloc(8, sizeof(int));
+
+    FILE* fp = fopen(read_file_name, "r");
+    if (fp == nullptr) // NULL
+        printf("File %s wasn't opened\n", read_file_name);
+    
+    spu->size = 0;
+    spu->code = code_creator(fp, &spu->size);
+    
+}
+
+void spu_destructor(sput_t* spu)
+{
+    stack_destructor(spu->stack);
+    stack_destructor(spu->ret);
+    free(spu->code);
+    free(spu->regs);
+}
+
+int spu_dump(sput_t* spu, const char* file, const char* func, int line)
+{
+    printf("ProcessorDump called from %s:%d in function %s()\n", file, line, func);
+    
+    printf("spu [%p]\n", spu);
+    printf(".size = %lu,\n.code = %p\n", spu -> size, spu -> code);
+    for (size_t i = 1; i < spu -> size; i++) {
+        printf("[%02lu] = %d\n", i, spu -> code[i]);
+    }
+    stack_dump(spu -> stack, file, line, func);
+    return 0;
 }
