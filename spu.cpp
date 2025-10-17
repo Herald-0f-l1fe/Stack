@@ -21,7 +21,6 @@ struct sput_t
     size_t size;
 };
 
-void calculator(stk_t* stack);
 int* code_creator(FILE* fp, size_t* size);
 int code_calculator(sput_t* spu);
 void spu_creator(sput_t* spu, const char* read_file_name, stk_t* stk1, stk_t* ret);
@@ -36,70 +35,13 @@ int main()
     stk_t stk1 = {0, 0, 0, 0};
     stk_t stk_ret ={0, 0, 0, 0};
     spu_creator(&spu, str, &stk1, &stk_ret);
+    
     code_calculator(&spu);
+
     spu_destructor(&spu);
+
     return 0;
 }
-
-/*void calculator(stk_t* stk)
-{
-    char command[10] = {};
-    stack_value value = 0, pop_value1 = 0, pop_value2 = 0; 
-    scanf("%s", command);
-    while(strcmp(command, "HLT"))
-    {
-        if(!strcmp(command,"PUSH"))
-        {
-            scanf("%d", &value);
-            XXXL(stack_push(stk, value);
-        }
-   )     else if(!strcmp(command,"ADD"))
-        {
-            XXXL(stack_pop(stk, &pop_value1));
-            XXXL(stack_pop(stk, &pop_value2));
-            XXXL(stack_push(stk, pop_value2 + pop_valu)e1);
-        }
-        
-        else if(!strcmp(command,"SUB"))
-        {
-            XXXL(stack_pop(stk, &pop_value1));
-            XXXL(stack_pop(stk, &pop_value2));
-            XXXL(stack_push(stk, pop_value2 - pop_valu)e1);
-        }
-
-        else if(!strcmp(command,"MUL"))
-        {
-            XXXL(stack_pop(stk, &pop_value1));
-            XXXL(stack_pop(stk, &pop_value2));
-            XXXL(stack_push(stk, pop_value2 * pop_valu)e1);
-        }
-
-        else if(!strcmp(command,"DIV"))
-        {
-            XXXL(stack_pop(stk, &pop_value1));
-            XXXL(stack_pop(stk, &pop_value2));
-            XXXL(stack_push(stk, pop_value2 / pop_valu)e1);
-        }
-
-        else if(!strcmp(command,"SQVRT"))
-        {
-            XXXL(stack_pop(stk, &pop_value1));
-            XXXL(stack_push(stk, (int)sqrt(pop_value1)));
-        }
-
-        else if(!strcmp(command,"OUT"))
-        {
-            XXXL(stack_pop(stk, &pop_value1));
-            printf("Out value is %d\n", pop_value1);
-        }
-
-        else
-        {
-            printf("I don't know this command");
-        }
-        scanf("%s", command);
-    }
-}*/
 
 int* code_creator(FILE* fp, size_t* size)
 {
@@ -129,7 +71,7 @@ int code_calculator(sput_t* spu)
     int reg_namb = 0;
     while(com != HLT)
     {
-        switch (com)
+        switch (com) //в массиве с командами указатель на функцию, поэтому проход
         {
         case PUSH:
             value = spu->code[spu->pc++];
@@ -253,7 +195,7 @@ void spu_creator(sput_t* spu, const char* read_file_name, stk_t* stk1, stk_t* re
 
     FILE* fp = fopen(read_file_name, "r");
     if (fp == nullptr) // NULL
-        printf("File %s wasn't opened\n", read_file_name);
+        printf("File %s wasn't opened\n", read_file_name); //func load
     
     spu->size = 0;
     spu->code = code_creator(fp, &spu->size);

@@ -1,7 +1,6 @@
 //#include <TXLib.h>
 #include <stdio.h>
 #include <math.h>
-#include "commands.h"
 #include "everything_about_stack.h"
 #include "stack_protection.h"
 #include "stack_operations.h"

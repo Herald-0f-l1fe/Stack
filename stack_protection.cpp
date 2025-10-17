@@ -1,7 +1,6 @@
 //#include <TXLib.h>
 #include <stdio.h>
 #include <math.h>
-#include "commands.h"
 #include "everything_about_stack.h"
 #include "stack_protection.h"
 
@@ -115,8 +114,8 @@ void stack_dump(stk_t* stack, const char* file, const int line, const char* func
 
 
         printf("stack addres = %p\n", stack_pointer);
-        printf("stack size = %lld\n", size);
-        printf("stack capacity = %lld\n", capacity);
+        printf("stack size = %ld\n", size);
+        printf("stack capacity = %ld\n", capacity);
         printf("stack data pointer = %p\n", data);
 
         printf("stack print\n");

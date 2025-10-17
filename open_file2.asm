@@ -1,6 +1,6 @@
 PUSH 1
 POPREG A
-:1
+:repeat
 PUSHREG A
 PUSHREG A
 MUL
@@ -11,5 +11,5 @@ ADD
 POPREG A
 PUSHREG A
 PUSH 10
-JB :1 
+JB :repeat 
 HLT

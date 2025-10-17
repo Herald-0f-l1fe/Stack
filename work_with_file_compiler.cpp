@@ -64,7 +64,7 @@ char* filling_the_buffer_with_text(long int size, FILE* fp)
 strings* array_of_pointers_only(char* buffer, asms* asm1)
 {
     strings* array = (strings*)calloc((size_t)asm1->cnt, sizeof(strings));
-    if (array == 0)
+    if (array == 0) // можно было лучше
         printf("Memory for the only_pointer_arr was not allocated.\n");
     
     char* buffer1 = strchr(buffer, '\n');
