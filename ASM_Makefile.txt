@@ -2,7 +2,7 @@ FLAGS=-D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -I/usr/include/ -Weffc++ -Wa
 
 all: asm
 
-asm: work_with_file_compiler.o new_compiler.o 
+asm: work_with_file_compiler.o new_compiler.o
 	g++ work_with_file_compiler.o new_compiler.o ${FLAGS} -o asm
 
 work_with_file_compiler.o: work_with_file_compiler.cpp

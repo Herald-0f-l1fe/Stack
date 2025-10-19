@@ -2,14 +2,17 @@ FLAGS=-D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -I/usr/include/ -Weffc++ -Wa
 
 all: spu
 
-spu: stack_protection.o spu.o stack_operations.o
-	g++ spu.o stack_protection.o stack_operations.o ${FLAGS} -o spu
+spu: stack_protection.o spu.o stack_operations.o spu_functions.o
+	g++ spu.o stack_protection.o stack_operations.o spu_functions.o ${FLAGS} -o spu
 	
 stack_protection.o: stack_protection.cpp
 	g++ stack_protection.cpp ${FLAGS} -c stack_protection.o
 
 stack_operations.o: stack_operations.cpp
 	g++ stack_operations.cpp ${FLAGS} -c stack_operations.o
+
+spu_functions.o: spu_functions.cpp
+	g++ spu_functions.cpp ${FLAGS} -c spu_functions.o
 
 spu.o: spu.cpp
 	g++ spu.cpp ${FLAGS} -c spu.o

@@ -3,7 +3,7 @@
 #define EVERY
 
 #include <ctype.h>
-
+#include <stdlib.h>
 typedef int stack_value;
 const stack_value Сanary_l =  987149;
 const stack_value Сanary_r = 12648430;

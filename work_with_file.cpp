@@ -1,4 +1,3 @@
-//#include <TXLib.h>
 #include <stdio.h>
 #include <string.h>
 #include "..\Onegin\read_from_file_to_buffer.h"

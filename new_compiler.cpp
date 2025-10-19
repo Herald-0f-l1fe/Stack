@@ -1,57 +1,18 @@
-#include "commands.h"
-#include "../Onegin/read_from_file_to_buffer.h"
-#include "../Onegin/output_text_and_pointers_arr.h"
-
-#define VERSION 2
-struct asms {             // move in header
-    int* byte_code;
-    label_t* str_labels;
-    size_t cnt; 
-    size_t pc;
-    size_t capacity;
-    strings* array;
-};
-
-struct reg_names
-{
-    const char* reg_name;
-    size_t reg_value;
-};
-
-reg_names registrs[] = {{"AX", 65}, {"BX", 66}, {"CX", 67}, {"DX", 68}};
-void asm_creator(asms* asm1, const char* str, long int file_size); 
-void asm_destructor(asms* asm1);   
-strings* array_of_pointers_only(char*, asms*); 
-void widen_memory_for_byte_code(int** byte_code, size_t* capacity, size_t pc);
-strings* read_file(const char* file_name, long int* file_size, asms* asm1);
-
-int command_check(char* com, int line);
-void compiler(asms* asm1);
-int new_command_check(char* com, size_t line, int* value, char* svalue, asms* asm1);
-void make_arg(int* value, char* svalue, char* string, size_t i);
-size_t give_reg_namb(const char* reg_name);
-
-void command_to_bytecode(asms* asm1, size_t com_namb, int value, char* svalue);
-void byte_code_to_file(const char* output_file_name, int* byte_code, size_t pc);
-
-
-label_t* label_init(label_t* str_labels);
-int label_create(char* name, label_t* str_labels, size_t pc);
-int label_check(char* name, label_t* str_labels);
-void label_destructor(label_t* str_labels);
-void lab_dump(label_t* str_labels);
+#include "new_compiler.h"
+#include "enums_and_libs.h"
 
 int main()
 {
     asms asm1 = {};
     long int file_size = 0;
-    const char* str = "open_file.asm"; // argc argv -> будет прикольно, если реализуешь, не горит
-    const char* output_file_name = "test.txt"; // define INPUT && OUTPUT
+    const char* str = "open_file.asm"; 
+    const char* output_file_name = "test.txt"; 
 
     asm_creator(&asm1, str, file_size); //typedef int arg_t -> todo in header
     
     compiler(&asm1);
     compiler(&asm1);
+    lab_dump(asm1.str_labels);
 
     byte_code_to_file(output_file_name, asm1.byte_code, asm1.pc);
    
@@ -169,14 +130,14 @@ void compiler(asms* asm1)
             continue;   
         }
 
-        command_to_bytecode(asm1, com_namb, value, svalue);
+        command_to_bytecode(asm1, com_namb, &value, svalue);
     }
 }
 
 void byte_code_to_file(const char* output_file_name, int* byte_code, size_t pc)
 {
     FILE* fp = open_output_file(output_file_name);
-    for (int i = 0; i <= (int)pc; i++) // size_t
+    for (size_t i = 0; i <= (int)pc; i++)
     {
         fprintf(fp, "%d ", byte_code[i]);  // fwrite is the best solve to binary files
     }
@@ -187,9 +148,9 @@ int new_command_check(char* command, size_t line, int* value, char* svalue, asms
 {
     sscanf(asm1->array[line].pointer, "%s", command);
     printf("%s\n", command);
-    for (size_t cmd = 0; cmd < number_of_com; cmd++)  
+    for (size_t cmd = 0; cmd < ASM_number_of_com; cmd++)  
     {
-        if (!strcasecmp(command, commands_info[cmd].name))
+        if (!strcasecmp(command, ASM_commands_info[cmd].name))
         {
             make_arg(value, svalue, asm1->array[line].pointer, cmd);
             return cmd;
@@ -275,23 +236,18 @@ void asm_destructor(asms* asm1)
     label_destructor(asm1->str_labels);
 }
 
-void new_compiler()
-{
-    //тут я напишу новый с указтелем на функцию
-}
-
 void make_arg(int* value, char* svalue, char* string, size_t i)
 {
-    if (commands_info[i].arg_type == TYPE_LABEL)
+    if (ASM_commands_info[i].arg_type == TYPE_LABEL)
     {
         sscanf(string, "%*s :%s", svalue);
     }    
-    else if (commands_info[i].arg_type == TYPE_STR)
+    else if (ASM_commands_info[i].arg_type == TYPE_STR)
     {
         sscanf(string, "%*s %s", svalue);
         *value = (int)give_reg_namb(svalue);
     }
-    else if (commands_info[i].arg_type == TYPE_DIGIT)
+    else if (ASM_commands_info[i].arg_type == TYPE_DIGIT)
     {
        sscanf(string, "%*s %d", value);
     }
@@ -309,15 +265,15 @@ size_t give_reg_namb(const char* reg_name)
     return 0;
 }
 
-void command_to_bytecode(asms* asm1, size_t com_namb, int value, char* svalue)
+void command_to_bytecode(asms* asm1, size_t com_namb, int* value, char* svalue)
 {
-    if(commands_info[com_namb].arg_type == TYPE_LABEL)
-            value = label_check(svalue, asm1->str_labels);
+    if(ASM_commands_info[com_namb].arg_type == TYPE_LABEL)
+            *value = label_check(svalue, asm1->str_labels);
 
-        asm1->byte_code[asm1->pc++] = commands_info[com_namb].namber;
+        asm1->byte_code[asm1->pc++] = ASM_commands_info[com_namb].namber;
 
-        if (commands_info[com_namb].arg_type != TYPE_NONE)
+        if (ASM_commands_info[com_namb].arg_type != TYPE_NONE)
         {
-            asm1->byte_code[asm1->pc++] = value;
+            asm1->byte_code[asm1->pc++] = *value;
         }
 }

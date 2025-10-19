@@ -1,31 +1,24 @@
-//#include <TXLib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include "commands.h"
 #include "everything_about_stack.h"
 #include "stack_protection.h"
 #include "stack_operations.h"
+#include "spu_func.h"
 
 #define Max_size_t_value 100000000
 #define XXXL(func) if(func){spu_dump(spu, __FILE__, __FUNCTION__, __LINE__); return 0;}
 
 
-struct sput_t 
-{
-    int* code;
-    size_t pc;
-    stk_t* stack;
-    stk_t* ret;
-    int* regs;
-    size_t size;
-};
-
 int* code_creator(FILE* fp, size_t* size);
 int code_calculator(sput_t* spu);
 void spu_creator(sput_t* spu, const char* read_file_name, stk_t* stk1, stk_t* ret);
 void spu_destructor(sput_t* spu);
+
 int spu_dump(sput_t* spu, const char* file, const char* func, int line);
+void code_dump(sput_t* spu);
+void reg_dump(sput_t* spu);
+
+
+int find_cmd_pointer(int cmd, size_t pc);
+int new_code_calculator(sput_t* spu);
 
 
 int main()
@@ -36,8 +29,8 @@ int main()
     stk_t stk_ret ={0, 0, 0, 0};
     spu_creator(&spu, str, &stk1, &stk_ret);
     
-    code_calculator(&spu);
-
+    new_code_calculator(&spu);
+    //spu_dump(&spu, __FILE__, __FUNCTION__, __LINE__);
     spu_destructor(&spu);
 
     return 0;
@@ -46,17 +39,18 @@ int main()
 int* code_creator(FILE* fp, size_t* size)
 {
     int code_size = 10;
-    size = 0;
+    *size = 0;
     int* code = (int*)calloc((size_t)code_size, sizeof(int));
     int code_pointer = 0; 
+    printf("Start creating bytecode\n");
     while(fscanf(fp,"%d", &code[code_pointer++]) != EOF)
     {
-        if (code_pointer == code_size)
+        if (code_pointer >= code_size - 1)
         {
             code_size *= 2;
             code = (int*) realloc(code, (size_t)code_size*sizeof(int));
         }
-        *size++;
+        (*size)++;
     }
     code[code_pointer] = HLT;
 
@@ -106,11 +100,11 @@ int code_calculator(sput_t* spu)
             printf("Out value is %d\n", pop_value1);
             break;
         case PUSHREG:
-            reg_namb = spu->code[spu->pc++] -(int)'A';
+            reg_namb = spu->code[spu->pc++];
             XXXL(stack_push(stk, spu->regs[reg_namb]));
             break;
         case POPREG:
-            reg_namb = spu->code[spu->pc++] - (int)'A';
+            reg_namb = spu->code[spu->pc++];
             XXXL(stack_pop(stk, &(spu->regs[reg_namb])));
             break;
         case JMP:
@@ -190,7 +184,6 @@ void spu_creator(sput_t* spu, const char* read_file_name, stk_t* stk1, stk_t* re
     stack_creator(ret, 10);
     spu->ret = ret;
     spu->stack = stk1;
-    //print_data(spu->stk->data, spu->stk->capacity);
     spu->regs = (int*) calloc(8, sizeof(int));
 
     FILE* fp = fopen(read_file_name, "r");
@@ -216,9 +209,60 @@ int spu_dump(sput_t* spu, const char* file, const char* func, int line)
     
     printf("spu [%p]\n", spu);
     printf(".size = %lu,\n.code = %p\n", spu -> size, spu -> code);
-    for (size_t i = 1; i < spu -> size; i++) {
-        printf("[%02lu] = %d\n", i, spu -> code[i]);
-    }
+    
+    code_dump(spu);
+    reg_dump(spu);
+
     stack_dump(spu -> stack, file, line, func);
     return 0;
+}
+
+int new_code_calculator(sput_t* spu)
+{
+    int cmd = spu->code[spu->pc];
+    while(cmd != HLT)
+    {
+        //printf("Command number is %d, pc is %d\n", cmd, spu->pc);
+        //spu_dump(spu, __FILE__, __FUNCTION__, __LINE__);
+        int cmd_ip = find_cmd_pointer(cmd, spu->pc);
+        SPU_commands_info[cmd_ip].function (cmd, spu);
+        cmd = spu->code[spu->pc];
+    
+    }
+    return SUCCESS;
+}
+
+int find_cmd_pointer(int cmd, size_t pc)
+{
+    for (size_t i = 0; i < SPU_number_of_com; i++)
+    {
+        if (cmd == SPU_commands_info[i].namber)
+            return i;
+    }
+    printf("I don't know this command, cmd_namber is %d pc == %ld\n", cmd, pc);
+    return -1;
+}
+
+void code_dump(sput_t* spu)
+{
+    printf("---------spu bytecode--------\n");
+    printf("-----------------------------\n");
+    for (int i = 0; i < spu->size; i++)
+    {
+        printf("%d ", spu->code[i]);
+    }
+    printf("\n-------------------------------\n");
+    printf("--------END OF BYTECODE--------\n");
+}
+
+void reg_dump(sput_t* spu)
+{
+    printf("---------spu registrs--------\n");
+    printf("-----------------------------\n");
+    for (int i = 0; i < 8; i++)
+    {
+        printf("Reg[%d] = %d\n", i, spu->regs[i]);
+    }
+    printf("---------end registrs--------\n");
+    printf("-----------------------------\n");   
 }
