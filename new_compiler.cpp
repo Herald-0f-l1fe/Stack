@@ -7,17 +7,18 @@ int main()
     const char* str = "open_file.asm"; 
     const char* output_file_name = "test.txt"; 
 
-    asm_creator(&asm1, str, file_size); //typedef int arg_t -> todo in header
+    GOOD(asm_creator(&asm1, str, file_size)) //typedef int arg_t -> todo in header
     
-    compiler(&asm1);
-    compiler(&asm1);
+    GOOD(assmbler(&asm1))
 
-    ON_DEBUG((asm1.str_labels);)
+    ON_DEBUG((asm1.str_labels))
 
-    byte_code_to_file(output_file_name, asm1.byte_code, asm1.pc);
+    GOOD(byte_code_to_file(output_file_name, asm1.byte_code, asm1.pc))
    
     asm_destructor(&asm1);
-    return 0;
+
+
+    return SUCCESS;
 }
 
 
@@ -251,4 +252,12 @@ void command_to_bytecode(asms* asm1, size_t com_namb, int* value, char* svalue)
 
     if (ASM_commands_info[com_namb].arg_type != TYPE_NONE)
         asm1->byte_code[asm1->pc++] = *value;
+}
+
+results assmbler(asms* asm1)
+{
+    GOOD(compiler(asm1))
+    GOOD(compiler(asm1))
+
+    return SUCCESS;
 }

@@ -6,7 +6,9 @@
         return FAIL;\
     \
 
+
 #else
     #define ON_DEBUG(...)
     #define PRP(...)
 #endif 
+

@@ -77,6 +77,7 @@ void asm_destructor(asms* asm1);
 strings* array_of_pointers_only(char*, asms*); 
 strings* read_file(const char* file_name, long int* file_size, asms* asm1);
 
+results assmbler(asms* asm1);
 int command_check(char* com, int line);
 results compiler(asms* asm1);
 size_t new_command_check(char* com, size_t line, int* value, char* svalue, asms* asm1);
@@ -85,6 +86,8 @@ size_t give_reg_namb(const char* reg_name);
 
 void command_to_bytecode(asms* asm1, size_t com_namb, int* value, char* svalue);
 results byte_code_to_file(const char* output_file_name, int* byte_code, size_t pc);
+
+
 
 
 label_t* label_init(label_t* str_labels);

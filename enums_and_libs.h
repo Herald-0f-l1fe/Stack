@@ -10,6 +10,7 @@
 #include "DEBUG.h"
 
 
+
 enum commands
 {
     PUSH,
@@ -41,6 +42,12 @@ enum results
     FAIL = -1,
     SUCCESS = 1,
 };
+
+#define GOOD(func)\
+    if (func == FAIL)\
+         return FAIL;\
+
+
 
 enum tips
 {
