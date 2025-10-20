@@ -5,7 +5,7 @@
 #include "stack_protection.h"
 
 
-int error_decoder(stk_t* stk)
+int error_decoder(stack_t* stk)
 {
     if (!stk)
     {
@@ -52,7 +52,7 @@ int error_decoder(stk_t* stk)
     return 0;
 }
 
-stack_errors stack_err(stk_t* stk)
+stack_errors stack_err(stack_t* stk)
 {
     if (!stk)
     {
@@ -100,7 +100,7 @@ void print_data(stack_value* data, ssize_t capacity)
         printf("$%d\n", data[i]);
 }
 
-void stack_dump(stk_t* stack, const char* file, const int line, const char* func)
+void stack_dump(stack_t* stack, const char* file, const int line, const char* func)
 {
     printf("StackDump called from %s:%d in function %s()\n", file, line, func);
     void* stack_pointer = stack;

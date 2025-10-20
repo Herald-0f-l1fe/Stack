@@ -8,14 +8,14 @@ struct sput_t
 {
     int* code;
     size_t pc;
-    stk_t* stack;
-    stk_t* ret;
+    stack_t* stack;
+    stack_t* ret;
     int* regs;
     size_t size;
 };
 
 
-typedef int (*func_t)(int cmd, sput_t* spu);
+typedef results (*func_t)(int cmd, sput_t* spu);
 
 struct com_check_t 
 {
@@ -26,21 +26,21 @@ struct com_check_t
 };
 
 
-int func_push_spu(int cmd_namber, sput_t* spu);
+results func_push_spu(int cmd_namber, sput_t* spu);
 
-int spu_jwc_func(int jump, sput_t* spu);
+results spu_jwc_func(int jump, sput_t* spu);
 
-int spu_operation_func(int cmd, sput_t* spu);
+results spu_operation_func(int cmd, sput_t* spu);
 
-int spu_out_func(int cmd, sput_t* spu);
+results spu_out_func(int cmd, sput_t* spu);
 
-int spu_sqvrt_func(int cmd, sput_t* spu);
+results spu_sqvrt_func(int cmd, sput_t* spu);
 
-int spu_jmp_func(int cmd, sput_t* spu);
+results spu_jmp_func(int cmd, sput_t* spu);
 
-int spu_call_func(int cmd, sput_t* spu);
+results spu_call_func(int cmd, sput_t* spu);
 
-int spu_ret_func(int cmd, sput_t* spu);
+results spu_ret_func(int cmd, sput_t* spu);
 
 com_check_t SPU_commands_info[] = 
 {

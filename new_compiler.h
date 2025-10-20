@@ -4,19 +4,23 @@
 #include "../Onegin/output_text_and_pointers_arr.h"
 #include "enums_and_libs.h"
 
+
+#define MAX_CMD_SIZE 20
+#define MAX_STR_ARG_SIZE 32
+#define NUM_LAB 10
+
 struct label_t
 {
     char* name;
-    size_t point;
+    ssize_t point;
 };
-int label_size = 10;
+size_t label_size = 10;
 
 struct asms {
     int* byte_code;
     label_t* str_labels;
     size_t cnt; 
     size_t pc;
-    size_t capacity;
     strings* array;
 };
 
@@ -68,24 +72,23 @@ reg_names registrs[] = {{"AX", 0}, {"BX", 1}, {"CX", 2}, {"DX", 3}};
 
 
 
-void asm_creator(asms* asm1, const char* str, long int file_size); 
+results asm_creator(asms* asm1, const char* str, long int file_size); 
 void asm_destructor(asms* asm1);   
 strings* array_of_pointers_only(char*, asms*); 
-void widen_memory_for_byte_code(int** byte_code, size_t* capacity, size_t pc);
 strings* read_file(const char* file_name, long int* file_size, asms* asm1);
 
 int command_check(char* com, int line);
-void compiler(asms* asm1);
-int new_command_check(char* com, size_t line, int* value, char* svalue, asms* asm1);
+results compiler(asms* asm1);
+size_t new_command_check(char* com, size_t line, int* value, char* svalue, asms* asm1);
 void make_arg(int* value, char* svalue, char* string, size_t i);
 size_t give_reg_namb(const char* reg_name);
 
 void command_to_bytecode(asms* asm1, size_t com_namb, int* value, char* svalue);
-void byte_code_to_file(const char* output_file_name, int* byte_code, size_t pc);
+results byte_code_to_file(const char* output_file_name, int* byte_code, size_t pc);
 
 
 label_t* label_init(label_t* str_labels);
-int label_create(char* name, label_t* str_labels, size_t pc);
+results label_create(char* name, label_t* str_labels, size_t pc);
 int label_check(char* name, label_t* str_labels);
 void label_destructor(label_t* str_labels);
 void lab_dump(label_t* str_labels);

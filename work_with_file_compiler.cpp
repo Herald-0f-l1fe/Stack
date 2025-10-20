@@ -19,7 +19,7 @@ void n_to_o(strings* arr, int cnt);
 char* read_from_file_to_buffer(long int* size, const char* str)
 {
     FILE* fp = fopen(str, "r");
-    if (fp == nullptr) // NULL
+    if (fp == nullptr) 
         printf("File %s didn't open\n", str);
 
     *size = finding_file_size(str);
@@ -98,6 +98,7 @@ FILE* open_output_file(const char* output_file_name)
 int line_counter(char* buffer)
 {
     int cnt = 0;
+    
     for (char* buffer1 = strchr(buffer, '\n'); buffer1 != NULL; buffer1 = strchr(buffer1 + 1, '\n'))
     {
         if (*(buffer1 + 1) != '\n')

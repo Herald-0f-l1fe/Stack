@@ -6,7 +6,7 @@
 #include "stack_operations.h"
 
 
-stack_errors stack_push(stk_t* stk, stack_value value)
+stack_errors stack_push(stack_t* stk, stack_value value)
 {
     if (stack_err(stk))
         printf("Error in stack_push\n");
@@ -31,7 +31,7 @@ stack_errors stack_push(stk_t* stk, stack_value value)
     return no_errors;
 }
 
-stack_errors stack_pop(stk_t* stk, stack_value* pop_value)
+stack_errors stack_pop(stack_t* stk, stack_value* pop_value)
 {
     if (stack_err(stk))
     {
@@ -62,9 +62,9 @@ stack_errors stack_pop(stk_t* stk, stack_value* pop_value)
     return no_errors;
 }
 
-stack_errors widen_memory(stk_t* stk)
+stack_errors widen_memory(stack_t* stk)
 {
-    stack_value* data = (stack_value*)realloc(stk->data, (stk->capacity*2 + 2)*sizeof(stack_value));
+    stack_value* data = (stack_value*)realloc(stk->data, (size_t) (stk->capacity*2 + 2)*sizeof(stack_value));
     if (data)
     {
         stk->data = data;
@@ -80,18 +80,18 @@ stack_errors widen_memory(stk_t* stk)
     return no_errors;
 }
 
-void stack_destructor(stk_t* stack)
+void stack_destructor(stack_t* stack)
 {
     free(stack->data);
 }
 
-stack_errors stack_creator(stk_t* stk, ssize_t capacity)
+stack_errors stack_creator(stack_t* stk, ssize_t capacity)
 {
 
     if(!stk)
         return null_pointer_to_structure;
     
-    stk->data = (stack_value*)calloc(capacity + 2, sizeof(stack_value));
+    stk->data = (stack_value*)calloc((size_t)capacity + 2, sizeof(stack_value));
 
     if(!stk->data)
     {
@@ -110,7 +110,7 @@ stack_errors stack_creator(stk_t* stk, ssize_t capacity)
     stk->size = 0;
     stk->data[0] = Сanary_l;
     stk->data[capacity + 1] = Сanary_r;
-    for (size_t i = 1; i <= stk -> capacity; i++) {
+    for (ssize_t i = 1; i <= stk -> capacity; i++) {
         stk -> data[i] = MATAN;
     }
     if (stack_err(stk))

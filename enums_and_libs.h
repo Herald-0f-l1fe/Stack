@@ -6,6 +6,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+//#define DEBUG
+#include "DEBUG.h"
 
 
 enum commands

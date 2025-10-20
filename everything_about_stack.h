@@ -4,11 +4,12 @@
 
 #include <ctype.h>
 #include <stdlib.h>
+
 typedef int stack_value;
 const stack_value Сanary_l =  987149;
 const stack_value Сanary_r = 12648430;
 
-struct stk_t           // stack_t
+struct stack_t
 {
     stack_value* data;
     ssize_t size;
