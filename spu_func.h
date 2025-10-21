@@ -12,6 +12,7 @@ struct sput_t
     stack_t* ret;
     int* regs;
     size_t size;
+    int* RAM;
 };
 
 
@@ -26,7 +27,7 @@ struct com_check_t
 };
 
 
-results func_push_spu(int cmd_namber, sput_t* spu);
+results spu_func_push(int cmd_namber, sput_t* spu);
 
 results spu_jwc_func(int jump, sput_t* spu);
 
@@ -44,31 +45,30 @@ results spu_ret_func(int cmd, sput_t* spu);
 
 com_check_t SPU_commands_info[] = 
 {
-    {"PUSH", PUSH, TYPE_DIGIT, func_push_spu},
-    {"IN", IN, TYPE_NONE, func_push_spu},
-    {"ADD", ADD, TYPE_NONE, spu_operation_func},
-    {"SUB", SUB, TYPE_NONE, spu_operation_func},
-    {"MUL", MUL, TYPE_NONE, spu_operation_func},
-    {"DIV", DIV, TYPE_NONE, spu_operation_func},
-    {"SQVRT", SQVRT, TYPE_NONE, spu_sqvrt_func},
-    {"OUT", OUTP, TYPE_NONE, spu_out_func},
-    {"JMP", JMP, TYPE_LABEL, spu_jmp_func},
-    {"JB", JB, TYPE_LABEL, spu_jwc_func},
-    {"JA", JA, TYPE_LABEL, spu_jwc_func},
-    {"JBE", JBE, TYPE_LABEL, spu_jwc_func},
-    {"JAE", JAE, TYPE_LABEL, spu_jwc_func},
-    {"JE", JE, TYPE_LABEL, spu_jwc_func},
-    {"JNE", JNE, TYPE_LABEL, spu_jwc_func},
-    {"CALL", CALL, TYPE_LABEL, spu_call_func},
-    {"RET", RET, TYPE_NONE, spu_ret_func},
-    {"PUSHREG", PUSHREG, TYPE_STR, func_push_spu},
-    {"POPREG", POPREG, TYPE_STR, spu_out_func},
+    {"PUSH",    PUSH,    TYPE_DIGIT, spu_func_push},
+    {"IN",      IN,      TYPE_NONE,  spu_func_push},
+    {"ADD",     ADD,     TYPE_NONE,  spu_operation_func},
+    {"SUB",     SUB,     TYPE_NONE,  spu_operation_func},
+    {"MUL",     MUL,     TYPE_NONE,  spu_operation_func},
+    {"DIV",     DIV,     TYPE_NONE,  spu_operation_func},
+    {"SQVRT",   SQVRT,   TYPE_NONE,  spu_sqvrt_func},
+    {"OUT",     OUTP,    TYPE_NONE,  spu_out_func},
+    {"JMP",     JMP,     TYPE_LABEL, spu_jmp_func},
+    {"JB",      JB,      TYPE_LABEL, spu_jwc_func},
+    {"JA",      JA,      TYPE_LABEL, spu_jwc_func},
+    {"JBE",     JBE,     TYPE_LABEL, spu_jwc_func},
+    {"JAE",     JAE,     TYPE_LABEL, spu_jwc_func},
+    {"JE",      JE,      TYPE_LABEL, spu_jwc_func},
+    {"JNE",     JNE,     TYPE_LABEL, spu_jwc_func},
+    {"CALL",    CALL,    TYPE_LABEL, spu_call_func},
+    {"RET",     RET,     TYPE_NONE,  spu_ret_func},
+    {"PUSHREG", PUSHREG, TYPE_STR,   spu_func_push},
+    {"POPREG",  POPREG,  TYPE_STR,   spu_out_func},
+    {"POPM",    POPM,    TYPE_STR,   spu_out_func},
+    {"PUSHM",   PUSHM,   TYPE_STR,   spu_func_push}
 };
 
 size_t SPU_number_of_com = sizeof(SPU_commands_info)/sizeof(SPU_commands_info[0]);
-
-
-
 
 
 

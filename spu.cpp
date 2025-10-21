@@ -7,6 +7,7 @@
 
 #define STACK_SIZE 10
 #define REG_SIZE 8
+#define RAM_SIZE 100
 
 int* code_creator(FILE* fp, size_t* size);
 int code_calculator(sput_t* spu);
@@ -25,9 +26,10 @@ int new_code_calculator(sput_t* spu);
 int main()
 {
     const char* str = "test.txt";
-    sput_t spu = {0, 0, 0, 0, 0, 0};
-    stack_t stk1 = {0, 0, 0, 0};
-    stack_t stk_ret ={0, 0, 0, 0};
+    sput_t spu = {0};
+    stack_t stk1 = {0};
+    stack_t stk_ret ={0};
+
     spu_creator(&spu, str, &stk1, &stk_ret);
     
     new_code_calculator(&spu);
@@ -41,7 +43,7 @@ int* code_creator(FILE* fp, size_t* size)
 {
     int code_size = 10;
     *size = 0;
-    int* code = (int*)calloc((size_t)code_size, sizeof(int));
+    int* code = (int*)calloc((size_t)code_size, sizeof(int)); // check
     int code_pointer = 0; 
 
     ON_DEBUG(printf("Start creating bytecode\n");)
@@ -51,7 +53,7 @@ int* code_creator(FILE* fp, size_t* size)
         if (code_pointer >= code_size - 1)
         {
             code_size *= 2;
-            code = (int*) realloc(code, (size_t)code_size*sizeof(int));
+            code = (int*) realloc(code, (size_t)code_size*sizeof(int)); // check
         }
         (*size)++;
     }
@@ -190,7 +192,7 @@ results spu_creator(sput_t* spu, const char* read_file_name, stack_t* stk1, stac
 
     spu->ret = ret;
     spu->stack = stk1;
-    spu->regs = (int*) calloc(REG_SIZE, sizeof(int));
+    spu->regs = (int*) calloc(REG_SIZE, sizeof(int)); // check
 
     FILE* fp = fopen(read_file_name, "r");
     if (fp == nullptr)
@@ -200,6 +202,9 @@ results spu_creator(sput_t* spu, const char* read_file_name, stack_t* stk1, stac
     }
     spu->size = 0;
     spu->code = code_creator(fp, &spu->size);
+
+    spu->RAM = (stack_value*) calloc(RAM_SIZE, sizeof(stack_value)); // check
+
     return SUCCESS;
     
 }

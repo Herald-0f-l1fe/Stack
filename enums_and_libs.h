@@ -33,6 +33,8 @@ enum commands
     JNE,
     CALL,
     RET,    
+    PUSHM,
+    POPM,
     PUSHREG = 32,
     POPREG = 39,
 };
@@ -45,7 +47,7 @@ enum results
 
 #define GOOD(func)              \   
     if (func == FAIL)           \
-        return FAIL;        \
+        return FAIL;
 
 enum tips
 {

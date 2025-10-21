@@ -58,6 +58,8 @@ com_check_t ASM_commands_info[] =
     {"RET", RET, TYPE_NONE},
     {"PUSHREG", PUSHREG, TYPE_STR},
     {"POPREG", POPREG, TYPE_STR},
+    {"PUSHM", PUSHM, TYPE_STR},
+    {"POPM", POPM, TYPE_STR},
 };
 
 size_t ASM_number_of_com = sizeof(ASM_commands_info)/sizeof(ASM_commands_info[0]);
@@ -79,7 +81,6 @@ strings* array_of_pointers_only(char*, asms*);
 strings* read_file(const char* file_name, long int* file_size, asms* asm1);
 
 results assmbler(asms* asm1);
-int command_check(char* com, int line);
 results compiler(asms* asm1);
 size_t new_command_check(char* com, size_t line, int* value, char* svalue, asms* asm1);
 void make_arg(int* value, char* svalue, char* string, size_t i);

@@ -11,9 +11,10 @@ struct sput_t
     stack_t* ret;
     int* regs;
     size_t size;
+    int* RAM;
 };
 
-results func_push_spu(int cmd_namber, sput_t* spu);
+results spu_func_push(int cmd_namber, sput_t* spu);
 
 results spu_jwc_func(int jump, sput_t* spu);
 
@@ -28,6 +29,7 @@ results spu_jmp_func(int cmd, sput_t* spu);
 results spu_call_func(int cmd, sput_t* spu);
 
 results spu_ret_func(int cmd, sput_t* spu);
+
 
 #define JWC(spu, condition)\
     jump_value = 0;\
@@ -60,7 +62,7 @@ results spu_ret_func(int cmd, sput_t* spu);
     return SUCCESS;
 
 
-results func_push_spu(int cmd_namber, sput_t* spu)
+results spu_func_push(int cmd_namber, sput_t* spu)
 {
     int push_value = 0;
     switch (cmd_namber)
@@ -93,12 +95,22 @@ results func_push_spu(int cmd_namber, sput_t* spu)
 
             return SUCCESS;
             break;
+        case PUSHM:
+            ON_DEBUG(printf("SPU_PC is %lu\n", spu->pc);)
+            push_value = spu->code[++spu->pc];
+            push_value = spu->regs[push_value];
 
+            ON_DEBUG(printf("PUSHM namber is %d\n", push_value);)
+            stack_push(spu->stack, spu->RAM[push_value]);
+            spu->pc++;
+
+            return SUCCESS;
         default:
             return FAIL;
     }  
     
 }
+
 results spu_jwc_func(int jump, sput_t* spu)
 {
     ssize_t jump_value = 0;
@@ -179,6 +191,16 @@ results spu_out_func(int cmd, sput_t* spu)
             return SUCCESS;
             break;
 
+        case POPM:
+
+            reg_namb = spu->code[++spu->pc];
+            
+            stack_pop(spu->stack, &(spu->RAM[spu->regs[reg_namb]]));
+            spu->pc++;
+
+            return SUCCESS;
+            break;
+        
         default:
             printf("I don't know this command\n");
 

@@ -4,7 +4,10 @@ IN
 POPREG CX
 PUSH 1
 POPREG BX
-:repeat
+CALL :factorial
+HLT
+
+:factorial
 PUSHREG BX
 PUSHREG AX
 PUSH 1
@@ -17,5 +20,7 @@ PUSHREG BX
 OUT
 PUSHREG AX
 PUSHREG CX
-JB :repeat
-HLT
+JAE :out
+CALL :factorial
+:out
+RET
