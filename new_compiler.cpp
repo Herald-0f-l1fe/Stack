@@ -4,14 +4,14 @@ int main()
 {
     asms asm1 = {};
     long int file_size = 0;
-    const char* str = "open_file.asm"; 
+    const char* str = "Factorial.asm"; 
     const char* output_file_name = "test.txt"; 
 
     GOOD(asm_creator(&asm1, str, file_size)) //typedef int arg_t -> todo in header
     
     GOOD(assmbler(&asm1))
 
-    ON_DEBUG((asm1.str_labels))
+    ON_DEBUG((asm1.str_labels));
 
     GOOD(byte_code_to_file(output_file_name, asm1.byte_code, asm1.pc))
    
@@ -59,11 +59,10 @@ results compiler(asms* asm1)
         }   
 
         command_to_bytecode(asm1, com_namb, &value, svalue);
-
-
     }
+    
+    
     return SUCCESS;
-
 }
 
 results byte_code_to_file(const char* output_file_name, int* byte_code, size_t pc)
@@ -80,12 +79,13 @@ results byte_code_to_file(const char* output_file_name, int* byte_code, size_t p
 
     fclose(fp);
 
+    
     return SUCCESS;
 }
 
 size_t new_command_check(char* command, size_t line, int* value, char* svalue, asms* asm1) 
 {
-    sscanf(asm1->array[line].pointer, "%s", command);
+    sscanf(asm1->array[line].pointer, "%19s", command);
 
     ON_DEBUG(printf("%s\n", command);)
 
@@ -127,6 +127,7 @@ label_t* label_init(label_t* str_labels)
             printf("NULLPTR to name of label");
     }
 
+    
     return str_labels;
 }
 
@@ -151,6 +152,7 @@ results label_create(char* name, label_t* str_labels, size_t pc)
         }
     }
 
+ 
     return FAIL;
 }
 
@@ -162,6 +164,7 @@ int label_check(char* name, label_t* str_labels)
             return (int)str_labels[i].point;
     }
 
+    
     return FAIL;
 }
 
@@ -189,6 +192,7 @@ results asm_creator(asms* asm1, const char* str, long int file_size)
 
     asm1->str_labels = label_init(str_labels);
 
+    
     return SUCCESS;
 }
 
@@ -211,13 +215,13 @@ void make_arg(int* value, char* svalue, char* string, size_t i)
 {
     if (ASM_commands_info[i].arg_type == TYPE_LABEL)
     {
-        sscanf(string, "%*s :%s", svalue);
+        sscanf(string, "%*s :%31s", svalue);
     }    
 
 
     else if (ASM_commands_info[i].arg_type == TYPE_STR)
     {
-        sscanf(string, "%*s %s", svalue);
+        sscanf(string, "%*s %31s", svalue);
         *value = (int)give_reg_namb(svalue);
     }
 
@@ -246,7 +250,7 @@ size_t give_reg_namb(const char* reg_name)
 void command_to_bytecode(asms* asm1, size_t com_namb, int* value, char* svalue)
 {
     if (ASM_commands_info[com_namb].arg_type == TYPE_LABEL)
-            *value = label_check(svalue, asm1->str_labels);
+        *value = label_check(svalue, asm1->str_labels);
 
     asm1->byte_code[asm1->pc++] = ASM_commands_info[com_namb].namber;
 
@@ -258,6 +262,7 @@ results assmbler(asms* asm1)
 {
     GOOD(compiler(asm1))
     GOOD(compiler(asm1))
+
 
     return SUCCESS;
 }

@@ -43,11 +43,9 @@ enum results
     SUCCESS = 1,
 };
 
-#define GOOD(func)\
-    if (func == FAIL)\
-         return FAIL;\
-
-
+#define GOOD(func)              \   
+    if (func == FAIL)           \
+        return FAIL;        \
 
 enum tips
 {

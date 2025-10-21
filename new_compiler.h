@@ -16,7 +16,8 @@ struct label_t
 };
 size_t label_size = 10;
 
-struct asms {
+struct asms 
+{
     int* byte_code;
     label_t* str_labels;
     size_t cnt; 
